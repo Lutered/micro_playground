@@ -15,4 +15,9 @@
     <PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AuthService\AuthAPI.csproj" />
+    <ProjectReference Include="..\Gateway\Gateway.csproj" />
+  </ItemGroup>
+
 </Project>
