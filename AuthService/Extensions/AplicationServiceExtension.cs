@@ -2,7 +2,6 @@
 using AuthAPI.Data;
 using AuthAPI.Intrefaces;
 using AuthAPI.Services;
-using Contracts.AuthApi;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,33 +18,32 @@ namespace AuthAPI.Extensions
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IAuthService, AuthService>();
 
-            services.AddMassTransit(c => 
-            {
+            //services.AddMassTransit(c => 
+            //{
                
-                c.AddConsumer<RegisterConsumer>();
-                c.AddConsumer<LoginConsumer>();
+            //    c.AddConsumer<RegisterConsumer>();
+            //    c.AddConsumer<LoginConsumer>();
 
-                c.UsingRabbitMq((ctx, cfg) => 
-                {
-                    cfg.Host("localhost", "/", h =>
-                    {
-                        h.Username("guest");
-                        h.Password("guest");
-                    });
+            //    c.UsingRabbitMq((ctx, cfg) => 
+            //    {
+            //        cfg.Host("localhost", "/", h =>
+            //        {
+            //            h.Username("guest");
+            //            h.Password("guest");
+            //        });
 
-                    cfg.ReceiveEndpoint("register-event", e =>
-                    {
-                        e.ConfigureConsumer<RegisterConsumer>(ctx);
-                    });
+            //        cfg.ReceiveEndpoint("register-event", e =>
+            //        {
+            //            e.ConfigureConsumer<RegisterConsumer>(ctx);
+            //        });
 
-                    cfg.ReceiveEndpoint("login-event", e =>
-                    {
-                        e.ConfigureConsumer<LoginConsumer>(ctx);
-                    });
-                });
-            });
+            //        cfg.ReceiveEndpoint("login-event", e =>
+            //        {
+            //            e.ConfigureConsumer<LoginConsumer>(ctx);
+            //        });
+            //    });
+            //});
 
 
             return services;

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Contracts.AuthApi.Requests
+﻿namespace AuthAPI.DTOs
 {
-    public class Register
+    public class RegisterDTO
     {
         public string Username { get; set; }
         public string Email { get; set; }

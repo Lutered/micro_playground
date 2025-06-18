@@ -1,6 +1,6 @@
 ﻿using AuthAPI.Data.Entities;
+using AuthAPI.DTOs;
 using AutoMapper;
-using Contracts.AuthApi.Requests;
 
 namespace AuthAPI.Helpers
 {
@@ -8,8 +8,8 @@ namespace AuthAPI.Helpers
     {
         public AutoMapperProfiles() 
         {
-            CreateMap<AppUser, Register>();
-            CreateMap<AppUser, Login>();
+            CreateMap<AppUser, UserDTO>();
+            CreateMap<RegisterDTO, AppUser>();
         }
     }
 }

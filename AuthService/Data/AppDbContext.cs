@@ -16,6 +16,6 @@ namespace AuthAPI.Data
         IdentityUserToken<int>
     >
     {
-        public AppDbContext(DbContextOptions options) : base(options) { }
+        public AppDbContext(DbContextOptions options) : base(options) { Database.EnsureCreated(); }
     }
 }

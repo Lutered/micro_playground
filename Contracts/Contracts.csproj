@@ -6,4 +6,9 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="AuthApi\Requests\" />
+    <Folder Include="AuthApi\Responses\" />
+  </ItemGroup>
+
 </Project>

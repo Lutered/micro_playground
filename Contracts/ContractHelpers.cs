@@ -8,14 +8,6 @@ namespace Contracts
 {
     public static class ContractHelpers
     {
-        public static T ReturnError<T>(int code, string message) where T : BaseResponseContract
-        {
-            return (T)new BaseResponseContract
-            {
-                IsError = true,
-                StatusCode = code,
-                ErrorMessage = message
-            };
-        }
+        
     }
 }
