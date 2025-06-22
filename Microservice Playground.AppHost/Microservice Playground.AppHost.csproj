@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AuthService\AuthAPI.csproj" />
     <ProjectReference Include="..\Gateway\Gateway.csproj" />
+    <ProjectReference Include="..\UsersAPI\UsersAPI.csproj" />
   </ItemGroup>
 
 </Project>

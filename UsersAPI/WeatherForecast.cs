@@ -1,4 +1,4 @@
-namespace Gateway;
+namespace UsersAPI;
 
 public class WeatherForecast
 {

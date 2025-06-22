@@ -49,11 +49,11 @@ namespace AuthAPI.Controllers
             if (!roleResult.Succeeded)
                 return BadRequest(roleResult.Errors);
 
-            return new UserDTO()
+            return StatusCode(201, new UserDTO()
             {
                 Username = user.UserName,
                 Token = await _tokenService.CreateToken(user)
-            };
+            });
         }
 
         [HttpPost]
