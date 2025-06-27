@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Contracts
 {
-    public static class ContractHelpers
+    public class UserLogin
     {
-        
+        public string Username { get; set; }
+        public DateTime LoginTime { get; set; }
     }
 }

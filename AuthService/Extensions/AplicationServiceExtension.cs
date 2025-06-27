@@ -1,5 +1,4 @@
-﻿using AuthAPI.Consumers;
-using AuthAPI.Data;
+﻿using AuthAPI.Data;
 using AuthAPI.Intrefaces;
 using AuthAPI.Services;
 using MassTransit;
@@ -13,37 +12,28 @@ namespace AuthAPI.Extensions
         {
             services.AddDbContext<AppDbContext>(opt =>
             {
-                opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
+               // opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
+                opt.UseNpgsql(config.GetConnectionString("AuthDBConnection"));
             });
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<ITokenService, TokenService>();
 
-            //services.AddMassTransit(c => 
-            //{
-               
-            //    c.AddConsumer<RegisterConsumer>();
-            //    c.AddConsumer<LoginConsumer>();
+            var rabbitMqConfig = config.GetRequiredSection("RabbitMq");
 
-            //    c.UsingRabbitMq((ctx, cfg) => 
-            //    {
-            //        cfg.Host("localhost", "/", h =>
-            //        {
-            //            h.Username("guest");
-            //            h.Password("guest");
-            //        });
+            services.AddMassTransit(c =>
+            {
+                c.UsingRabbitMq((ctx, cfg) =>
+                {
+                    cfg.Host(rabbitMqConfig["Host"], rabbitMqConfig["VirtualHost"], h =>
+                    {
+                        h.Username(rabbitMqConfig["User"]);
+                        h.Password(rabbitMqConfig["Password"]);
+                    });
 
-            //        cfg.ReceiveEndpoint("register-event", e =>
-            //        {
-            //            e.ConfigureConsumer<RegisterConsumer>(ctx);
-            //        });
-
-            //        cfg.ReceiveEndpoint("login-event", e =>
-            //        {
-            //            e.ConfigureConsumer<LoginConsumer>(ctx);
-            //        });
-            //    });
-            //});
+                    cfg.ConfigureEndpoints(ctx);
+                });
+            });
 
 
             return services;

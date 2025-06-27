@@ -16,6 +16,10 @@ namespace AuthAPI.Data
         IdentityUserToken<int>
     >
     {
-        public AppDbContext(DbContextOptions options) : base(options) { Database.EnsureCreated(); }
+        public AppDbContext(DbContextOptions options) : base(options) 
+        { 
+            //Database.EnsureDeleted(); 
+            Database.EnsureCreated(); 
+        }
     }
 }

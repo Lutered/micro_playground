@@ -4,19 +4,27 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace AuthAPI.Services
 {
     public class TokenService : ITokenService
     {
-        private readonly SymmetricSecurityKey _key;
+        //private readonly SymmetricSecurityKey _key;
+        private readonly RsaSecurityKey _key;
         private readonly UserManager<AppUser> _userManager;
 
         public TokenService(IConfiguration config, UserManager<AppUser> userManager)
         {
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
             _userManager = userManager;
+
+            var privateKey = File.ReadAllText(config["TokenPath"]);
+            var rsa = RSA.Create();
+            rsa.ImportFromPem(privateKey.ToCharArray());
+
+            _key = new RsaSecurityKey(rsa);
+           // _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
         }
 
         public async Task<string> CreateToken(AppUser user)
@@ -29,7 +37,7 @@ namespace AuthAPI.Services
 
             var roles = await _userManager.GetRolesAsync(user);
 
-            var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
+            var creds = new SigningCredentials(_key, SecurityAlgorithms.RsaSha256); //SecurityAlgorithms.HmacSha512Signature
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

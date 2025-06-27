@@ -29,4 +29,9 @@
     <ProjectReference Include="..\Microservice Playground.ServiceDefaults\Microservice Playground.ServiceDefaults.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="PrivateStaticFiles\" />
+    <Folder Include="Sagas\" />
+  </ItemGroup>
+
 </Project>

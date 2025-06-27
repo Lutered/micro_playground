@@ -5,6 +5,9 @@ using AuthAPI.Intrefaces;
 using AuthAPI.Services;
 using AutoMapper;
 using Contracts;
+using MassTransit;
+using MassTransit.Transports;
+using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,18 +21,23 @@ namespace AuthAPI.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
+        private readonly IPublishEndpoint _publishEndpoint;
 
         public AuthController(
             UserManager<AppUser> userManager, 
             IMapper mapper, 
-            ITokenService tokenService) 
+            ITokenService tokenService,
+            IPublishEndpoint publishEndpoint
+         ) 
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _mapper = mapper;
+            _publishEndpoint = publishEndpoint;
         }
 
         [HttpPost]
+        [RequestTimeout(milliseconds: 100)]
         public async Task<ActionResult<UserDTO>> Register(RegisterDTO registerDTO)
         {
             if (await UserExists(registerDTO.Username))
@@ -44,10 +52,12 @@ namespace AuthAPI.Controllers
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            var roleResult = await _userManager.AddToRoleAsync(user, "Member");
+            //var roleResult = await _userManager.AddToRoleAsync(user, "Member");
 
-            if (!roleResult.Succeeded)
-                return BadRequest(roleResult.Errors);
+            //if (!roleResult.Succeeded)
+            //    return BadRequest(roleResult.Errors);
+
+            await _publishEndpoint.Publish<UserCreated>(new UserCreated() { Username = user.UserName });
 
             return StatusCode(201, new UserDTO()
             {
@@ -60,7 +70,7 @@ namespace AuthAPI.Controllers
         public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDTO)
         {
             var user = await _userManager.Users
-              .FirstOrDefaultAsync(x => x.UserName == loginDTO.UserName);
+              .FirstOrDefaultAsync(x => x.UserName == loginDTO.Username);
 
             if (user == null) return Unauthorized("Invalid username");
 
@@ -68,11 +78,13 @@ namespace AuthAPI.Controllers
 
             if (!result) return Unauthorized("Invalid password");
 
-            return new UserDTO()
+            await _publishEndpoint.Publish<UserLogin>(new UserLogin() { Username = user.UserName, LoginTime = DateTime.Now });
+
+            return StatusCode(200, new UserDTO()
             {
                 Username = user.UserName,
                 Token = await _tokenService.CreateToken(user)
-            };
+            });
         }
 
         private async Task<bool> UserExists(string username)
