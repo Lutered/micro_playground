@@ -6,7 +6,10 @@ namespace AuthAPI.DTOs
     {
         [Required]
         public string Username { get; set; }
+        [Required]
+        [RegularExpression(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$")]
         public string Email { get; set; }
+        [Required]
         [Range(18, 99)]
         public int Age { get; set; }
         [Required]

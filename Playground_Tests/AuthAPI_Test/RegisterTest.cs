@@ -114,7 +114,7 @@ namespace Playground_Tests.AuthAPI_Test
             Assert.Equal(result.StatusCode, 201);
             Assert.NotNull(result.Value);
 
-            var user = Assert.IsType<UserDTO>(result.Value);
+            var user = Assert.IsType<AuthUserDTO>(result.Value);
 
             Assert.NotEmpty(user.Token);
             Assert.Equal(user.Username, username.ToLower());

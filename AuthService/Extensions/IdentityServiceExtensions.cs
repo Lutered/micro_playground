@@ -13,7 +13,7 @@ namespace AuthAPI.Extensions
         {
             services.AddIdentityCore<AppUser>(opt =>
             {
-                opt.Password.RequireNonAlphanumeric = false;
+                //opt.Password.RequireNonAlphanumeric = false;
                 //opt.User.RequireUniqueEmail = true;
             })
            .AddRoles<AppRole>()

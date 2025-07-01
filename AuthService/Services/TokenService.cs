@@ -32,7 +32,8 @@ namespace AuthAPI.Services
             var claims = new List<Claim>()
             {
                 new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Name, user.UserName)
+                new Claim(JwtRegisteredClaimNames.Name, user.UserName),
+                new Claim("Age", user.Age.ToString())
             };
 
             var roles = await _userManager.GetRolesAsync(user);
@@ -43,7 +44,9 @@ namespace AuthAPI.Services
             {
                 Subject = new ClaimsIdentity(claims),
                 SigningCredentials = creds,
-                Expires = DateTime.Now.AddDays(7)
+                Expires = DateTime.Now.AddDays(7),
+                Issuer = "AuthAPI",
+                Audience = "UserAPI"
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
