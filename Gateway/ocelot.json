@@ -1,7 +1,4 @@
 {
-  //"GlobalConfiguration": {
-  //  "BaseUrl": "http://localhost:7216"
-  //},
   "Routes": [
     //******* Start: Account Service ***********//
     {

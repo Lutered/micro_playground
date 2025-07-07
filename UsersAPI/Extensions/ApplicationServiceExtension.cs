@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using UsersAPI.Consumers;
 using UsersAPI.Data;
 using UsersAPI.Interfaces;
+using UsersAPI.Interfaces.Repositories;
+using UsersAPI.Services;
 
 namespace UsersAPI.Extensions
 {
@@ -11,6 +13,8 @@ namespace UsersAPI.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             services.AddDbContext<AppDbContext>(opt =>
             {
                 opt.UseNpgsql(config.GetConnectionString("UserDBConnection"));
@@ -40,9 +44,8 @@ namespace UsersAPI.Extensions
                 options.InstanceName = redisConfig["InstanceName"];
             });
 
-            services.AddScoped<UserRepository>();
-            services.AddScoped<ICacheService, ICacheService>();
-
+            services.AddScoped<IUserRepository, UserRepository>();
+            
             return services;
         }
     }

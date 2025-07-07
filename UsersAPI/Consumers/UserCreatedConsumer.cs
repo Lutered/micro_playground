@@ -3,10 +3,11 @@ using Contracts;
 using MassTransit;
 using UsersAPI.Data;
 using UsersAPI.DTOs;
+using UsersAPI.Interfaces.Repositories;
 
 namespace UsersAPI.Consumers
 {
-    public class UserCreatedConsumer(IMapper _mapper, UserRepository _userRepository): IConsumer<UserCreated>
+    public class UserCreatedConsumer(IMapper _mapper, IUserRepository _userRepository): IConsumer<UserCreated>
     {
         public async Task Consume(ConsumeContext<UserCreated> context)
         {

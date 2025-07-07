@@ -7,22 +7,23 @@ using UsersAPI.Data;
 using UsersAPI.Data.Entities;
 using UsersAPI.DTOs;
 using UsersAPI.Helpers;
+using UsersAPI.Interfaces.Repositories;
 
 namespace UsersAPI.Controllers
 {
-    [Authorize]
+   // [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly UserRepository _userRepository;
-        public UsersController(UserRepository userRepository) 
+        private readonly IUserRepository _userRepository;
+        public UsersController(IUserRepository userRepository) 
         {
             _userRepository = userRepository;
         }
 
         [HttpGet]
-        [Route("user/{username}")]
+        [Route("getuser/{username}")]
         public async Task<ActionResult<AppUserDTO>> GetUser(string username)
         {
             var user = await _userRepository.GetUserAsync(username);
@@ -33,13 +34,14 @@ namespace UsersAPI.Controllers
         }
 
         [HttpGet]
-        [Route("users")]
-        public async Task<ActionResult<PagedList<AppUserDTO>>> GetUsers(PageDTO pageParams)
+        [Route("getusers")]
+        public async Task<ActionResult<PagedList<AppUserDTO>>> GetUsers([FromQuery]PageDTO pageParams)
         {
             return await _userRepository.GetUsersAsync(pageParams.Page, pageParams.PageSize);
         }
 
         [HttpPost]
+        [Route("createuser")]
         public async Task<ActionResult> CreateUser(AppUserDTO appUser)
         {
             try
@@ -54,6 +56,7 @@ namespace UsersAPI.Controllers
         }
 
         [HttpDelete]
+        [Route("deleteuser")]
         public async Task<ActionResult> DeleteUser()
         {
             return Ok();

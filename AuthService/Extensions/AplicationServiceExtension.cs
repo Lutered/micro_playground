@@ -1,8 +1,11 @@
 ﻿using AuthAPI.Data;
 using AuthAPI.Intrefaces;
+using AuthAPI.Sagas;
+using AuthAPI.Sagas.Instances;
 using AuthAPI.Services;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using MassTransit.EntityFrameworkCoreIntegration;
 
 namespace AuthAPI.Extensions
 {
@@ -23,8 +26,16 @@ namespace AuthAPI.Extensions
 
             services.AddMassTransit(c =>
             {
+                //c.AddSagaStateMachine<UserStateMachine, UserState>()
+                //  .EntityFrameworkRepository(r =>
+                //  {
+                //      r.ConcurrencyMode = ConcurrencyMode.Optimistic;
+                //      r.ExistingDbContext<SagaContext>();
+                //  });
+
                 c.UsingRabbitMq((ctx, cfg) =>
                 {
+
                     cfg.Host(rabbitMqConfig["Host"], rabbitMqConfig["VirtualHost"], h =>
                     {
                         h.Username(rabbitMqConfig["User"]);

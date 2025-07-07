@@ -54,6 +54,7 @@ namespace AuthAPI.Controllers
 
             await _publishEndpoint.Publish<UserCreated>(new UserCreated() 
             { 
+                Id = new Guid(),
                 Username = user.UserName,
                 Email = user.Email,
                 Age = user.Age
