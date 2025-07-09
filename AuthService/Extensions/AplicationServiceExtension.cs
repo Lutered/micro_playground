@@ -6,6 +6,13 @@ using AuthAPI.Services;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using MassTransit.EntityFrameworkCoreIntegration;
+using AuthAPI.Data.Entities;
+using Microsoft.AspNetCore.Identity;
+using Serilog;
+using Elastic.Serilog.Sinks;
+using Elastic.Ingest.Elasticsearch.DataStreams;
+using Elastic.Ingest.Elasticsearch;
+using Elastic.Transport;
 
 namespace AuthAPI.Extensions
 {
@@ -13,39 +20,43 @@ namespace AuthAPI.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
+
             services.AddDbContext<AppDbContext>(opt =>
             {
-               // opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
-                opt.UseNpgsql(config.GetConnectionString("AuthDBConnection"));
+                opt.UseNpgsql(config.GetConnectionString("microservice-db"));   
             });
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<ITokenService, TokenService>();
 
-            var rabbitMqConfig = config.GetRequiredSection("RabbitMq");
-
             services.AddMassTransit(c =>
             {
-                //c.AddSagaStateMachine<UserStateMachine, UserState>()
-                //  .EntityFrameworkRepository(r =>
-                //  {
-                //      r.ConcurrencyMode = ConcurrencyMode.Optimistic;
-                //      r.ExistingDbContext<SagaContext>();
-                //  });
-
                 c.UsingRabbitMq((ctx, cfg) =>
                 {
-
-                    cfg.Host(rabbitMqConfig["Host"], rabbitMqConfig["VirtualHost"], h =>
-                    {
-                        h.Username(rabbitMqConfig["User"]);
-                        h.Password(rabbitMqConfig["Password"]);
-                    });
+                    cfg.Host(config.GetConnectionString("rabbitmq"));
 
                     cfg.ConfigureEndpoints(ctx);
                 });
             });
 
+            services.AddIdentityCore<AppUser>(opt => {})
+            .AddRoles<AppRole>()
+            .AddRoleManager<RoleManager<AppRole>>()
+            .AddEntityFrameworkStores<AppDbContext>();
+
+            //Log.Logger = new LoggerConfiguration()
+            //  .WriteTo.Elasticsearch(
+            //    new[] { new Uri(config["ElasticUrl"]) },
+            //    opts =>
+            //    {
+            //        opts.DataStream = new DataStreamName("logs", "users");
+            //        opts.BootstrapMethod = BootstrapMethod.Failure;
+            //    },
+            //    transport =>
+            //    {
+            //        //transport.Authentication(new BasicAuthentication("elastic", "py8*B*I=UC5MPi0yutgK "));
+            //    })
+            //  .CreateLogger();
 
             return services;
         }

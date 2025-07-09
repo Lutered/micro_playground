@@ -18,18 +18,21 @@ namespace AuthAPI.Controllers
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
         private readonly IPublishEndpoint _publishEndpoint;
+        private readonly ILogger<AuthController> _logger;
 
         public AuthController(
             UserManager<AppUser> userManager, 
             IMapper mapper, 
             ITokenService tokenService,
-            IPublishEndpoint publishEndpoint
+            IPublishEndpoint publishEndpoint,
+            ILogger<AuthController> logger
          ) 
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _mapper = mapper;
             _publishEndpoint = publishEndpoint;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -48,6 +51,8 @@ namespace AuthAPI.Controllers
                 return BadRequest(result.Errors);
 
             var roleResult = await _userManager.AddToRoleAsync(user, "Member");
+
+            _logger.LogInformation($"User {user.UserName} was created successfuly");
 
             if (!roleResult.Succeeded)
                 return BadRequest(roleResult.Errors);
@@ -71,13 +76,15 @@ namespace AuthAPI.Controllers
         public async Task<ActionResult<AuthUserDTO>> Login(LoginDTO loginDTO)
         {
             var user = await _userManager.Users
-              .FirstOrDefaultAsync(x => x.UserName == loginDTO.Username);
+              .FirstOrDefaultAsync(x => x.UserName == loginDTO.Username.ToLower());
 
             if (user == null) return Unauthorized("Invalid username");
 
             var result = await _userManager.CheckPasswordAsync(user, loginDTO.Password);
 
             if (!result) return Unauthorized("Invalid password");
+
+            _logger.LogInformation($"User {user.UserName} was login successfuly");
 
             await _publishEndpoint.Publish<UserLogin>(
                 new UserLogin() 

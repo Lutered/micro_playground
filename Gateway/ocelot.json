@@ -1,8 +1,7 @@
 {
   "Routes": [
-    //******* Start: Account Service ***********//
     {
-      "DownstreamPathTemplate": "/auth/login",
+      "DownstreamPathTemplate": "/auth/{action}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -10,21 +9,20 @@
           "Port": 7242
         }
       ],
-      "UpstreamPathTemplate": "/auth/login",
+      "UpstreamPathTemplate": "/api/auth/{action}",
       "UpstreamHttpMethod": [ "Post" ]
     },
     {
-      "DownstreamPathTemplate": "/auth/register",
+      "DownstreamPathTemplate": "/users/{action}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7242
+          "Port": 7227
         }
       ],
-      "UpstreamPathTemplate": "/auth/register",
-      "UpstreamHttpMethod": [ "Post" ]
+      "UpstreamPathTemplate": "/api/users/{action}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ]
     }
-    //******* End: Account Service ***********//
   ]
 }

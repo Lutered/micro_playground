@@ -1,11 +1,17 @@
 ﻿using Contracts;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using UsersAPI.Consumers;
 using UsersAPI.Data;
 using UsersAPI.Interfaces;
 using UsersAPI.Interfaces.Repositories;
 using UsersAPI.Services;
+using Serilog;
+using Elastic.Serilog.Sinks;
+using Elastic.Ingest.Elasticsearch;
+using Elastic.Transport;
+using Elastic.Ingest.Elasticsearch.DataStreams;
 
 namespace UsersAPI.Extensions
 {
@@ -45,7 +51,24 @@ namespace UsersAPI.Extensions
             });
 
             services.AddScoped<IUserRepository, UserRepository>();
-            
+
+            // Настройка Serilog
+            var elasticConfig = config.GetSection("Elasticsearch");
+            //Log.Logger = new LoggerConfiguration()
+            //  .WriteTo.Elasticsearch(
+            //    new[] { new Uri(elasticConfig["Url"]) },
+            //    opts =>
+            //    {
+            //        opts.DataStream = new DataStreamName("logs", "users");
+            //        opts.BootstrapMethod = BootstrapMethod.Failure;
+            //    }, 
+            //    transport =>
+            //    {
+            //      //transport.CertificateFingerprint("xxx");
+            //      transport.Authentication(new BasicAuthentication("elastic", "py8*B*I=UC5MPi0yutgK "));
+            //    })
+            //  .CreateLogger();
+
             return services;
         }
     }

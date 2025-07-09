@@ -1,3 +1,4 @@
+using Serilog;
 using UsersAPI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
+
+builder.Host.UseSerilog();
 
 var app = builder.Build();
 

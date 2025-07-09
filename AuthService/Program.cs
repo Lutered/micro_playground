@@ -3,6 +3,7 @@ using AuthAPI.Data.Entities;
 using AuthAPI.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
@@ -14,8 +15,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Logging.AddConsole();
 builder.Services.AddApplicationServices(builder.Configuration);
-builder.Services.AddIdentityServices(builder.Configuration);
+
+builder.Host.UseSerilog();
 
 var app = builder.Build();
 

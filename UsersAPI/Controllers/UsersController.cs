@@ -3,6 +3,7 @@ using Elastic.Clients.Elasticsearch;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
+using Serilog.Context;
 using UsersAPI.Data;
 using UsersAPI.Data.Entities;
 using UsersAPI.DTOs;
@@ -11,15 +12,17 @@ using UsersAPI.Interfaces.Repositories;
 
 namespace UsersAPI.Controllers
 {
-   // [Authorize]
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
-        public UsersController(IUserRepository userRepository) 
+        private readonly ILogger<UsersController> _logger;
+        public UsersController(IUserRepository userRepository, ILogger<UsersController> logger) 
         {
             _userRepository = userRepository;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -47,6 +50,8 @@ namespace UsersAPI.Controllers
             try
             {
                 await _userRepository.CreateUserAsync(appUser);
+               // LogContext.PushProperty("CorrelId", Guid.NewGuid().ToString());
+                _logger.LogInformation("User was created");
                 return Ok();
             }
             catch (Exception ex) 

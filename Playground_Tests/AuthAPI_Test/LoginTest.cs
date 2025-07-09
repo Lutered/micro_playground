@@ -5,6 +5,7 @@ using AuthAPI.Services;
 using AutoMapper;
 using Contracts;
 using MassTransit;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;

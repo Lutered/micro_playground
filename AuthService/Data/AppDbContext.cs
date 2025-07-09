@@ -21,5 +21,12 @@ namespace AuthAPI.Data
             //Database.EnsureDeleted(); 
             Database.EnsureCreated(); 
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.HasDefaultSchema("auth");
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }
