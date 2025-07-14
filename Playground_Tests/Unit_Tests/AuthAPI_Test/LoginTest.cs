@@ -4,11 +4,13 @@ using AuthAPI.DTOs;
 using AuthAPI.Services;
 using AutoMapper;
 using Contracts;
+using FluentAssertions;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using MockQueryable;
 using Moq;
 
@@ -69,6 +71,7 @@ namespace Playground_Tests.AuthAPI_Test
             var mockUserManager = GetMockUserManager();
             var mockPublisher = GetPublisherMock();
             var mockMapper = new Mock<IMapper>();
+            var mockLogger = new Mock<ILogger<AuthController>>();
 
             string username = "existsinguser";
 
@@ -82,6 +85,7 @@ namespace Playground_Tests.AuthAPI_Test
 
             mockMapper.Setup(m => m.Map<AppUser>(loginDto)).Returns(mappedUser);
             mockUserManager.Setup(um => um.CheckPasswordAsync(It.IsAny<AppUser>(), It.IsAny<string>())).ReturnsAsync(true);
+            mockLogger.Setup(m => m.LogInformation(It.IsAny<string>()));
 
             var tokenService = new TokenService(configuration, mockUserManager.Object);
 
@@ -89,7 +93,8 @@ namespace Playground_Tests.AuthAPI_Test
                 mockUserManager.Object, 
                 mockMapper.Object, 
                 tokenService, 
-                mockPublisher.Object);
+                mockPublisher.Object,
+                mockLogger.Object);
 
             var response = await controller.Login(loginDto);
 
@@ -100,7 +105,7 @@ namespace Playground_Tests.AuthAPI_Test
             Assert.Equal(result.StatusCode, 200);
             Assert.NotNull(result.Value);
 
-            var user = Assert.IsType<AuthUserDTO>(result.Value);
+            var user = Assert.IsType<AuthResponseDTO>(result.Value);
 
             Assert.NotEmpty(user.Token);
         }

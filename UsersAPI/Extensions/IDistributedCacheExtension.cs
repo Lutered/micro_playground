@@ -60,10 +60,7 @@ namespace UsersAPI.Extensions
             if(versionStr == null)
             {
                 versionStr = "1";
-                await distributedCache.SetStringAsync(fullKey, versionStr, new DistributedCacheEntryOptions
-                {
-                    SlidingExpiration = expirationTime
-                });
+                await distributedCache.SetStringAsync(fullKey, versionStr);
             }
             else await distributedCache.RefreshAsync(fullKey);
 
@@ -79,10 +76,7 @@ namespace UsersAPI.Extensions
 
             uint version = UInt32.Parse(versionStr) + 1;
 
-            await distributedCache.SetStringAsync(fullKey, version.ToString(), new DistributedCacheEntryOptions
-            {
-                SlidingExpiration = expirationTime
-            });
+            await distributedCache.SetStringAsync(fullKey, version.ToString());
         }
     }
 }

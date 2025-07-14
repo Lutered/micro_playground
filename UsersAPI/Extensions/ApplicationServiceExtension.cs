@@ -1,17 +1,9 @@
-﻿using Contracts;
-using MassTransit;
+﻿using MassTransit;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 using UsersAPI.Consumers;
 using UsersAPI.Data;
 using UsersAPI.Interfaces;
 using UsersAPI.Interfaces.Repositories;
-using UsersAPI.Services;
-using Serilog;
-using Elastic.Serilog.Sinks;
-using Elastic.Ingest.Elasticsearch;
-using Elastic.Transport;
-using Elastic.Ingest.Elasticsearch.DataStreams;
 
 namespace UsersAPI.Extensions
 {
@@ -19,55 +11,36 @@ namespace UsersAPI.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
+            services.AddControllers();
+            services.AddEndpointsApiExplorer();
+            services.AddSwaggerGen();
+
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddDbContext<AppDbContext>(opt =>
             {
-                opt.UseNpgsql(config.GetConnectionString("UserDBConnection"));
+                opt.UseNpgsql(config.GetConnectionString("usersdb"));
             });
 
-            var rabbitMqConfig = config.GetRequiredSection("RabbitMq");
             services.AddMassTransit(c =>
             {
-
                 c.AddConsumer<UserCreatedConsumer>();
 
                 c.UsingRabbitMq((ctx, cfg) =>
                 {
-                    cfg.Host(rabbitMqConfig["Host"], rabbitMqConfig["VirtualHost"], h =>
-                    {
-                        h.Username(rabbitMqConfig["User"]);
-                        h.Password(rabbitMqConfig["Password"]);
-                    });
+                    cfg.Host(config.GetConnectionString("rabbitmq"));
 
                     cfg.ConfigureEndpoints(ctx);
                 });
             });
 
+            var redisConnectionStr = config.GetConnectionString("redis");
             var redisConfig = config.GetSection("Redis");
             services.AddStackExchangeRedisCache(options => {
-                options.Configuration = redisConfig["Configuration"];
-                options.InstanceName = redisConfig["InstanceName"];
+                options.Configuration = config.GetConnectionString("redis");
             });
 
             services.AddScoped<IUserRepository, UserRepository>();
-
-            // Настройка Serilog
-            var elasticConfig = config.GetSection("Elasticsearch");
-            //Log.Logger = new LoggerConfiguration()
-            //  .WriteTo.Elasticsearch(
-            //    new[] { new Uri(elasticConfig["Url"]) },
-            //    opts =>
-            //    {
-            //        opts.DataStream = new DataStreamName("logs", "users");
-            //        opts.BootstrapMethod = BootstrapMethod.Failure;
-            //    }, 
-            //    transport =>
-            //    {
-            //      //transport.CertificateFingerprint("xxx");
-            //      transport.Authentication(new BasicAuthentication("elastic", "py8*B*I=UC5MPi0yutgK "));
-            //    })
-            //  .CreateLogger();
 
             return services;
         }

@@ -8,7 +8,7 @@ namespace AuthAPI.Helpers
     {
         public AutoMapperProfiles() 
         {
-            CreateMap<AppUser, AuthUserDTO>();
+            CreateMap<AppUser, AuthResponseDTO>();
             CreateMap<RegisterDTO, AppUser>();
         }
     }

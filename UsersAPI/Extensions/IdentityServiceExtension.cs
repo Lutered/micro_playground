@@ -12,7 +12,7 @@ namespace UsersAPI.Extensions
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    var publicKey = File.ReadAllText(config["TokenPath"]);
+                    var publicKey = File.ReadAllText(config["PublicKeyPath"]);
                     var rsa = RSA.Create();
                     rsa.ImportFromPem(publicKey.ToCharArray());
 

@@ -36,7 +36,7 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<AuthUserDTO>> Register(RegisterDTO registerDTO)
+        public async Task<ActionResult<AuthResponseDTO>> Register(RegisterDTO registerDTO)
         {
             if (await UserExists(registerDTO.Username))
                 return BadRequest($"User with username {registerDTO.Username} already exists");
@@ -65,7 +65,7 @@ namespace AuthAPI.Controllers
                 Age = user.Age
             });
 
-            return StatusCode(201, new AuthUserDTO()
+            return StatusCode(201, new AuthResponseDTO()
             {
                 Username = user.UserName,
                 Token = await _tokenService.CreateToken(user)
@@ -73,7 +73,7 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<AuthUserDTO>> Login(LoginDTO loginDTO)
+        public async Task<ActionResult<AuthResponseDTO>> Login(LoginDTO loginDTO)
         {
             var user = await _userManager.Users
               .FirstOrDefaultAsync(x => x.UserName == loginDTO.Username.ToLower());
@@ -94,7 +94,7 @@ namespace AuthAPI.Controllers
                 }
             );
 
-            return StatusCode(200, new AuthUserDTO()
+            return StatusCode(200, new AuthResponseDTO()
             {
                 Username = user.UserName,
                 Token = await _tokenService.CreateToken(user)

@@ -2,23 +2,23 @@
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
-using System.Text.Json;
 using UsersAPI.Data.Entities;
 using UsersAPI.DTOs;
 using UsersAPI.Extensions;
 using UsersAPI.Helpers;
-using UsersAPI.Interfaces;
 using UsersAPI.Interfaces.Repositories;
 
 namespace UsersAPI.Data
 {
     public class UserRepository : IUserRepository
     {
-        private readonly string cachePrefix = "usersrep";
+        //Temporary cache implementation
+        private readonly string _cachePrefix = "usersrep";
 
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
         private readonly IDistributedCache _cache;
+
         public UserRepository(
             AppDbContext context,
             IMapper mapper,
@@ -31,9 +31,10 @@ namespace UsersAPI.Data
         }
         public async Task<PagedList<AppUserDTO>> GetUsersAsync(int page, int pageSize)
         {
-            var version = await _cache.GetVersionAsync($"{cachePrefix}:users");
+            var version = await _cache.GetVersionAsync($"{_cachePrefix}:users");
 
-            return await _cache.GetObjectOrCreateAsync<PagedList<AppUserDTO>>($"{cachePrefix}:users:{version}:{page}:{pageSize}", 
+            return await _cache.GetObjectOrCreateAsync<PagedList<AppUserDTO>>(
+                $"{_cachePrefix}:users:{version}:{page}:{pageSize}", 
                 async () => 
                 {
                     int skipRecords = (page - 1) * pageSize;
@@ -42,19 +43,24 @@ namespace UsersAPI.Data
                                 .Skip(skipRecords)
                                 .Take(pageSize);
 
+                    var query = usersQuery
+                                .AsNoTracking()
+                                .ProjectTo<AppUserDTO>(_mapper.ConfigurationProvider);
+
                     return await PagedList<AppUserDTO>.CreateAsync(
-                        usersQuery.AsNoTracking().ProjectTo<AppUserDTO>(_mapper.ConfigurationProvider),
+                        query,
                         page,
                         pageSize);
                 });
         }
         public async Task<AppUserDTO> GetUserAsync(string username)
         {
-            return await _cache.GetObjectOrCreateAsync<AppUserDTO>($"{cachePrefix}:user:{username.ToString()}", 
+            return await _cache.GetObjectOrCreateAsync<AppUserDTO>(
+                $"{_cachePrefix}:user:{username.ToString()}", 
                 async () =>
                 {
                     return _mapper.Map<User, AppUserDTO>(
-                        await _context.Users.FirstOrDefaultAsync(x => x.UserName == username)
+                        await _context.Users.FirstOrDefaultAsync(x => x.Username == username)
                      );
                 });
         }
@@ -64,24 +70,21 @@ namespace UsersAPI.Data
             var user = _mapper.Map<AppUserDTO, User>(appUser);
 
             await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+
+            await _cache.UpdateVersionAsync($"{_cachePrefix}:users");
         }
 
-        public async Task UpdateCache()
+        public async Task DeleteUserAsync(string username)
         {
-            await _cache.UpdateVersionAsync($"{cachePrefix}:users");
-        }
+            var user = _context.Users.First(x => x.Username == username);
 
-        public void Update(User user)
-        {
-            _context.Entry(user).State = EntityState.Modified;
-        }
+            _context.Users.Remove(user);
 
-        public async Task<int> SaveChangesAsync()
-        {
-            var result = await _context.SaveChangesAsync();
-            await UpdateCache();
+            await _context.SaveChangesAsync();
 
-            return result;
+            await _cache.UpdateVersionAsync($"{_cachePrefix}:users");
+            await _cache.RemoveAsync($"{_cachePrefix}:user:{username.ToString()}");
         }
     }
 }

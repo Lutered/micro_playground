@@ -4,36 +4,30 @@ using MassTransit;
 
 namespace AuthAPI.Sagas
 {
-    public class UserStateMachine : MassTransitStateMachine<UserState>
+    public class UserStateMachine : MassTransitStateMachine<UserSagaInstance>
     {
-        public State Created { get; private set; }
+        public State Submit { get; private set; }
         public State Synchronized { get; private set; }
+        public State Fault { get; private set; }
 
-        public Event<UserCreated> UserCreated { get; private set; } = null!;
+        public Event<UserCreated> SubmittedEvent { get; private set; } = null!;
 
         public UserStateMachine()
         {
             InstanceState(x => x.CurrentState);
 
-            Event(() => UserCreated, x => x.CorrelateById(c => c.Message.Id));
+            Event(() => SubmittedEvent, x => x.CorrelateById(c => c.Message.Id));
 
             Initially(
-                When(UserCreated)
+                When(SubmittedEvent)
                     .Then(context =>
                     {
                         context.Saga.CreatedAt = DateTime.Now;
                         context.Saga.UserName = context.Message.Username;
                     })
-                    .TransitionTo(Created)
+                    .TransitionTo(Synchronized)
                     .Finalize()
             );
-
-            //During(Created,
-            //    When(OrderPaid)
-            //        .Then(context => context.Instance.PaidAt = context.Data.Timestamp)
-            //        .TransitionTo(Paid)
-            //        .Finalize()
-            //);
 
             SetCompletedWhenFinalized();
         }

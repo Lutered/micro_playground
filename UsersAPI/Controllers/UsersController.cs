@@ -1,11 +1,7 @@
 ﻿using AutoMapper;
-using Elastic.Clients.Elasticsearch;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
-using Serilog.Context;
-using UsersAPI.Data;
-using UsersAPI.Data.Entities;
 using UsersAPI.DTOs;
 using UsersAPI.Helpers;
 using UsersAPI.Interfaces.Repositories;
@@ -26,7 +22,7 @@ namespace UsersAPI.Controllers
         }
 
         [HttpGet]
-        [Route("getuser/{username}")]
+        [Route("user/{username}")]
         public async Task<ActionResult<AppUserDTO>> GetUser(string username)
         {
             var user = await _userRepository.GetUserAsync(username);
@@ -37,21 +33,19 @@ namespace UsersAPI.Controllers
         }
 
         [HttpGet]
-        [Route("getusers")]
+        [Route("get")]
         public async Task<ActionResult<PagedList<AppUserDTO>>> GetUsers([FromQuery]PageDTO pageParams)
         {
             return await _userRepository.GetUsersAsync(pageParams.Page, pageParams.PageSize);
         }
 
         [HttpPost]
-        [Route("createuser")]
+        [Route("create")]
         public async Task<ActionResult> CreateUser(AppUserDTO appUser)
         {
             try
             {
                 await _userRepository.CreateUserAsync(appUser);
-               // LogContext.PushProperty("CorrelId", Guid.NewGuid().ToString());
-                _logger.LogInformation("User was created");
                 return Ok();
             }
             catch (Exception ex) 
@@ -61,7 +55,7 @@ namespace UsersAPI.Controllers
         }
 
         [HttpDelete]
-        [Route("deleteuser")]
+        [Route("delete")]
         public async Task<ActionResult> DeleteUser()
         {
             return Ok();

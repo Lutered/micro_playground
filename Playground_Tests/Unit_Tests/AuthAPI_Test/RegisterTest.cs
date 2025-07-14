@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using MockQueryable;
 using Moq;
 using System;
@@ -84,6 +85,7 @@ namespace Playground_Tests.AuthAPI_Test
             var mockUserManager = GetMockUserManager();
             var mockPublisher = GetPublisherMock();
             var mockMapper = new Mock<IMapper>();
+            var mockLogger = new Mock<ILogger<AuthController>>();
 
             string username = "TestUser";
 
@@ -96,6 +98,7 @@ namespace Playground_Tests.AuthAPI_Test
             var mappedUser = new AppUser { UserName = registerDto.Username };
 
             mockMapper.Setup(m => m.Map<AppUser>(registerDto)).Returns(mappedUser);
+            mockLogger.Setup(m => m.LogInformation(It.IsAny<string>()));
 
             var tokenService = new TokenService(configuration, mockUserManager.Object);
 
@@ -103,7 +106,8 @@ namespace Playground_Tests.AuthAPI_Test
                 mockUserManager.Object, 
                 mockMapper.Object, 
                 tokenService, 
-                mockPublisher.Object);
+                mockPublisher.Object,
+                mockLogger.Object);
 
             var response = await controller.Register(registerDto);
 
@@ -114,7 +118,7 @@ namespace Playground_Tests.AuthAPI_Test
             Assert.Equal(result.StatusCode, 201);
             Assert.NotNull(result.Value);
 
-            var user = Assert.IsType<AuthUserDTO>(result.Value);
+            var user = Assert.IsType<AuthResponseDTO>(result.Value);
 
             Assert.NotEmpty(user.Token);
             Assert.Equal(user.Username, username.ToLower());
@@ -128,6 +132,7 @@ namespace Playground_Tests.AuthAPI_Test
             var mockUserManager = GetMockUserManager();
             var mockPublisher = GetPublisherMock();
             var mockMapper = new Mock<IMapper>();
+            var mockLogger = new Mock<ILogger<AuthController>>();
 
             string username = "existsinguser";
 
@@ -141,6 +146,7 @@ namespace Playground_Tests.AuthAPI_Test
 
 
             mockMapper.Setup(m => m.Map<AppUser>(registerDto)).Returns(mappedUser);
+            mockLogger.Setup(m => m.LogInformation(It.IsAny<string>()));
 
             var tokenService = new TokenService(configuration, mockUserManager.Object);
 
@@ -148,7 +154,8 @@ namespace Playground_Tests.AuthAPI_Test
                 mockUserManager.Object, 
                 mockMapper.Object, 
                 tokenService, 
-                mockPublisher.Object);
+                mockPublisher.Object,
+                mockLogger.Object);
 
             var response = await controller.Register(registerDto);
 

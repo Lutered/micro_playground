@@ -1,6 +1,6 @@
 ﻿namespace AuthAPI.DTOs
 {
-    public class AuthUserDTO
+    public class AuthResponseDTO
     {
         public string Token { get; set; }
         public string Username { get; set; }
