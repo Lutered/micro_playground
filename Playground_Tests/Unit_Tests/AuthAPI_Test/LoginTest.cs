@@ -3,7 +3,7 @@ using AuthAPI.Data.Entities;
 using AuthAPI.DTOs;
 using AuthAPI.Services;
 using AutoMapper;
-using Contracts;
+using Contracts.Requests.User;
 using FluentAssertions;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
@@ -55,8 +55,8 @@ namespace Playground_Tests.AuthAPI_Test
             var mockPublisher = new Mock<IPublishEndpoint>();
 
             mockPublisher
-            .Setup(x => x.Publish<UserLogin>(
-                It.IsAny<UserLogin>(),
+            .Setup(x => x.Publish<IUserLogin>(
+                It.IsAny<IUserLogin>(),
                 It.IsAny<CancellationToken>()
               ));
 

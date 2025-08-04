@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
+using Contracts.Requests.User;
+using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Distributed;
 using UsersAPI.DTOs;
 using UsersAPI.Helpers;
 using UsersAPI.Interfaces.Repositories;
@@ -14,15 +15,20 @@ namespace UsersAPI.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
+        private readonly IPublishEndpoint _publishEndpoint;
         private readonly ILogger<UsersController> _logger;
-        public UsersController(IUserRepository userRepository, ILogger<UsersController> logger) 
+        public UsersController(
+            IUserRepository userRepository, 
+            IPublishEndpoint publishEndpoint,
+            ILogger<UsersController> logger) 
         {
             _userRepository = userRepository;
+            _publishEndpoint = publishEndpoint;
             _logger = logger;
         }
 
         [HttpGet]
-        [Route("user/{username}")]
+        [Route("get/{username}")]
         public async Task<ActionResult<AppUserDTO>> GetUser(string username)
         {
             var user = await _userRepository.GetUserAsync(username);
@@ -39,25 +45,41 @@ namespace UsersAPI.Controllers
             return await _userRepository.GetUsersAsync(pageParams.Page, pageParams.PageSize);
         }
 
-        [HttpPost]
-        [Route("create")]
-        public async Task<ActionResult> CreateUser(AppUserDTO appUser)
+        //[HttpPost]
+        //[Route("create")]
+        //public async Task<ActionResult> CreateUser(AppUserDTO appUser)
+        //{
+        //    try
+        //    {
+        //        await _userRepository.CreateUserAsync(appUser);
+        //        return Ok();
+        //    }
+        //    catch (Exception ex) 
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
+
+        [HttpPut]
+        [Route("update")]
+        public async Task<ActionResult> UpdateUser(AppUserDTO appUser)
         {
-            try
-            {
-                await _userRepository.CreateUserAsync(appUser);
-                return Ok();
-            }
-            catch (Exception ex) 
-            {
-                return BadRequest(ex.Message);
-            }
+            bool result = await _userRepository.UpdateUserAsync(appUser);
+
+            return result ? Ok() : NotFound();
         }
 
         [HttpDelete]
-        [Route("delete")]
-        public async Task<ActionResult> DeleteUser()
+        [Route("delete/{username}")]
+        public async Task<ActionResult> DeleteUser(string username)
         {
+            await _userRepository.DeleteUserAsync(username);
+
+            await _publishEndpoint.Publish<UserDeleted>(new UserDeleted
+            {
+                Username = username
+            });
+
             return Ok();
         }
     }

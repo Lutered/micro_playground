@@ -3,7 +3,7 @@ using AuthAPI.Data.Entities;
 using AuthAPI.DTOs;
 using AuthAPI.Services;
 using AutoMapper;
-using Contracts;
+using Contracts.Requests.User;
 using MassTransit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

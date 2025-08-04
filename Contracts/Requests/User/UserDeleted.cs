@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Contracts
+namespace Contracts.Requests.User
 {
-    public class UserLogin
+    public class UserDeleted
     {
         public string Username { get; set; }
-        public DateTime LoginTime { get; set; }
     }
 }

@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground_Tests", "Playgro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsersAPI", "UsersAPI\UsersAPI.csproj", "{C8D967DC-9DDA-AE0F-E3AA-A8220A550084}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoursesApi", "CoursesApi\CoursesApi.csproj", "{6FD0E6D4-F3B8-48A2-DAD1-851FA5FFEFC4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{C8D967DC-9DDA-AE0F-E3AA-A8220A550084}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8D967DC-9DDA-AE0F-E3AA-A8220A550084}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8D967DC-9DDA-AE0F-E3AA-A8220A550084}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FD0E6D4-F3B8-48A2-DAD1-851FA5FFEFC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FD0E6D4-F3B8-48A2-DAD1-851FA5FFEFC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FD0E6D4-F3B8-48A2-DAD1-851FA5FFEFC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FD0E6D4-F3B8-48A2-DAD1-851FA5FFEFC4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +66,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{6CDAB7B3-DE4F-6FF5-06F0-D824F083F1AF} = {90B5DF6A-DF1F-4CCA-9F17-5B42C27B5E1F}
 		{C8D967DC-9DDA-AE0F-E3AA-A8220A550084} = {90B5DF6A-DF1F-4CCA-9F17-5B42C27B5E1F}
+		{6FD0E6D4-F3B8-48A2-DAD1-851FA5FFEFC4} = {90B5DF6A-DF1F-4CCA-9F17-5B42C27B5E1F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A6622B33-933F-4931-B181-BDD5621B1B06}

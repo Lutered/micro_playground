@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using MassTransit.EntityFrameworkCoreIntegration;
 using AuthAPI.Data.Entities;
 using Microsoft.AspNetCore.Identity;
+using Contracts.Requests.User;
+using AuthAPI.Consumers;
+using System.Reflection;
 
 namespace AuthAPI.Extensions
 {
@@ -29,9 +32,12 @@ namespace AuthAPI.Extensions
 
             services.AddMassTransit(c =>
             {
+                //c.AddRequestClient<UserCreated>();
+                c.AddConsumer<UserDeletedConsumer>();
+
                 c.UsingRabbitMq((ctx, cfg) =>
                 {
-                    cfg.Host(config.GetConnectionString("rabbitmq"));
+                    cfg.Host(new Uri(config.GetConnectionString("rabbitmqm")));
 
                     cfg.ConfigureEndpoints(ctx);
                 });
@@ -41,6 +47,11 @@ namespace AuthAPI.Extensions
             .AddRoles<AppRole>()
             .AddRoleManager<RoleManager<AppRole>>()
             .AddEntityFrameworkStores<AppDbContext>();
+
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+            });
 
             return services;
         }

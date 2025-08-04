@@ -65,6 +65,20 @@ namespace UsersAPI.Data
                 });
         }
 
+        public async Task<bool> UpdateUserAsync(AppUserDTO userUpdated)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == userUpdated.UserName);
+
+            if (user == null)
+                return false;
+
+            _mapper.Map(userUpdated, user);
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
         public async Task CreateUserAsync(AppUserDTO appUser)
         {
             var user = _mapper.Map<AppUserDTO, User>(appUser);

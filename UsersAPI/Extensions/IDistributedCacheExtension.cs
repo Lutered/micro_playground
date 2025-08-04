@@ -49,7 +49,6 @@ namespace UsersAPI.Extensions
             {
                 SlidingExpiration = expirationTime
             });
-            await distributedCache.RefreshAsync(key);
         }
 
         public static async Task<uint> GetVersionAsync(this IDistributedCache distributedCache, string key)

@@ -1,13 +1,16 @@
 ﻿using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Serilog.Sinks.Elasticsearch;
+using Serilog;
 using UsersAPI.Consumers;
 using UsersAPI.Data;
 using UsersAPI.Interfaces;
 using UsersAPI.Interfaces.Repositories;
+using Contracts.Requests.User;
 
 namespace UsersAPI.Extensions
 {
-    public static class AplicationServiceExtension
+    public static class ApplicationServiceExtension
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
@@ -28,14 +31,12 @@ namespace UsersAPI.Extensions
 
                 c.UsingRabbitMq((ctx, cfg) =>
                 {
-                    cfg.Host(config.GetConnectionString("rabbitmq"));
+                    cfg.Host(new Uri(config.GetConnectionString("rabbitmqm")));
 
                     cfg.ConfigureEndpoints(ctx);
                 });
             });
 
-            var redisConnectionStr = config.GetConnectionString("redis");
-            var redisConfig = config.GetSection("Redis");
             services.AddStackExchangeRedisCache(options => {
                 options.Configuration = config.GetConnectionString("redis");
             });

@@ -1,5 +1,5 @@
 ﻿using AuthAPI.Sagas.Instances;
-using Contracts;
+using Contracts.Requests.User;
 using MassTransit;
 
 namespace AuthAPI.Sagas
