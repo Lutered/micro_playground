@@ -1,25 +1,56 @@
 ﻿using AuthAPI.Data.Entities;
+using AuthAPI.Extensions;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace AuthAPI.Data
 {
     public class Seed
     {
-        public static async Task SeedRoles(RoleManager<AppRole> roleManager)
+        public static async Task SeedRoles(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
         {
-            if (await roleManager.Roles.AnyAsync()) return;
+            await EnsureRoleAsync(roleManager, "Member");
+            await EnsureRoleAsync(roleManager, "Saler");
+            await EnsureRoleAsync(roleManager, "Admin");
 
-            var roles = new List<AppRole>()
+            await EnsureUserAsync(
+                userManager,
+                "Admin", 
+                "admin@test.com", 
+                "Admin123!", 
+                "Admin");
+        }
+
+        private static async Task EnsureRoleAsync(RoleManager<AppRole> roleManager, string roleName)
+        {
+            if (!await roleManager.RoleExistsAsync(roleName))
             {
-                new AppRole{ Name = "Member"},
-                new AppRole{ Name = "Admin"}
+                await roleManager.CreateAsync(new AppRole(roleName));
+            }
+        }
+
+        private static async Task EnsureUserAsync(
+            UserManager<AppUser> userManager, 
+            string username, 
+            string email, 
+            string password, 
+            string role)
+        {
+            if (!await userManager.UserExistsAsync(username)) return;
+            
+            var user = new AppUser
+            {
+                UserName = username,
+                Email = email,
+                EmailConfirmed = true
             };
 
-            foreach (var role in roles)
+            var result = await userManager.CreateAsync(user, password);
+            
+            if (result.Succeeded)
             {
-                await roleManager.CreateAsync(role);
+                await userManager.AddToRoleAsync(user, role);
             }
+            
         }
     }
 }

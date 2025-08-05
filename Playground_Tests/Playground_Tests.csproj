@@ -36,6 +36,8 @@
 
   <ItemGroup>
     <Folder Include="Files\" />
+    <Folder Include="Unit_Tests\AuthAPI\Endpoints\" />
+    <Folder Include="Unit_Tests\AuthAPI\Consumers\" />
   </ItemGroup>
 
 </Project>

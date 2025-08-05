@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Playground_Tests.AuthAPI_Test
+﻿namespace Playground_Tests.AuthAPI
 {
     public static class Config
     {

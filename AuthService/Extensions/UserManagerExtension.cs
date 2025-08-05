@@ -6,9 +6,9 @@ namespace AuthAPI.Extensions
 {
     public static class UserManagerExtension
     {
-        public static async Task<bool> UserExists(this UserManager<AppUser> _userManager, string username)
+        public static async Task<bool> UserExistsAsync(this UserManager<AppUser> _userManager, string username)
         {
-            return await _userManager.Users.AnyAsync(x => x.UserName == username.ToLower());
+            return await _userManager.Users.AnyAsync(x => x.UserName == username);
         }
     }
 }

@@ -1,9 +1,8 @@
 ﻿using AuthAPI.Data.Entities;
-using AutoMapper;
-using Contracts.Requests.User;
 using MassTransit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Shared.Contracts;
 
 namespace AuthAPI.Consumers
 {

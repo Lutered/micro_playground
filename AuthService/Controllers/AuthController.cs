@@ -2,8 +2,6 @@
 using AuthAPI.DTOs;
 using AuthAPI.Intrefaces;
 using AutoMapper;
-using Contracts.Requests.User;
-using Contracts.Responses;
 using MassTransit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

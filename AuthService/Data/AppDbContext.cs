@@ -16,6 +16,8 @@ namespace AuthAPI.Data
         IdentityUserToken<int>
     >
     {
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+
         public AppDbContext(DbContextOptions options) : base(options) 
         { 
             //Database.EnsureDeleted(); 

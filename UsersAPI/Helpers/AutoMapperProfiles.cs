@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Contracts.Requests.User;
+using Shared.Contracts;
 using UsersAPI.Data.Entities;
 using UsersAPI.DTOs;
 
@@ -10,7 +10,6 @@ namespace UsersAPI.Helpers
         public AutoMapperProfiles()
         {
             CreateMap<AppUserDTO, User>();
-            CreateMap<User, AppUserDTO>();
             CreateMap<UserCreated, AppUserDTO>();
         }
     }

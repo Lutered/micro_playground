@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Contracts.Requests.User
+namespace Shared.Contracts
 {
-    public class UserDeleted
+    public interface ISuccessHandle
     {
-        public string Username { get; set; }
+        public bool IsSuccessful { get; set; }
     }
 }

@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Contracts\Contracts.csproj" />
+    <ProjectReference Include="..\Contracts\Shared.csproj" />
     <ProjectReference Include="..\Microservice Playground.ServiceDefaults\Microservice Playground.ServiceDefaults.csproj" />
   </ItemGroup>
 

@@ -1,10 +1,10 @@
 ﻿using AuthAPI.DTOs;
-using AuthAPI.Mediator;
 using MediatR;
+using Shared;
 
 namespace AuthAPI.MediatR.Commands
 {
-    public class LoginCommand : IRequest<Result<AuthResponseDTO>>
+    public class LoginCommand : IRequest<HandlerResult<AuthResponseDTO>>
     {
         public LoginDTO DTO { get; set; }
 

@@ -6,7 +6,6 @@ using UsersAPI.Consumers;
 using UsersAPI.Data;
 using UsersAPI.Interfaces;
 using UsersAPI.Interfaces.Repositories;
-using Contracts.Requests.User;
 
 namespace UsersAPI.Extensions
 {

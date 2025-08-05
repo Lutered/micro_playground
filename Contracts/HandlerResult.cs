@@ -1,14 +1,12 @@
-﻿using System.Net;
-
-namespace AuthAPI.Mediator
+﻿namespace Shared
 {
-    public class Result<T>
+    public class HandlerResult<T>
     {
         public bool IsSuccess { get; }
         public T? Value { get; }
         public AppError Error { get; }
 
-        private Result(
+        private HandlerResult(
             bool isSuccess, 
             T? value,
             AppError error
@@ -19,11 +17,11 @@ namespace AuthAPI.Mediator
             Error = error;
         }
 
-        public static Result<T> Success(T value)
-            => new Result<T>(true, value, null);
+        public static HandlerResult<T> Success(T value)
+            => new HandlerResult<T>(true, value, null);
 
-        public static Result<T> Failure(AppError error)
-            => new Result<T>(false, default, error);
+        public static HandlerResult<T> Failure(AppError error)
+            => new HandlerResult<T>(false, default, error);
     }
 
     public class AppError
@@ -31,7 +29,7 @@ namespace AuthAPI.Mediator
         public string Message { get; init; }
         public ErrorType? Type { get; init; } 
 
-        public AppError(string message, ErrorType? type)
+        public AppError(string message, ErrorType? type = null)
         {
             Message = message;
             Type = type;

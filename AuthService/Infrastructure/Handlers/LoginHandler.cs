@@ -1,46 +1,44 @@
 ﻿using AuthAPI.Data.Entities;
 using AuthAPI.DTOs;
-using AuthAPI.Extensions;
 using AuthAPI.Intrefaces;
-using AuthAPI.Mediator;
-using AutoMapper;
-using Contracts.Requests.User;
-using MassTransit;
+using AuthAPI.MediatR.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Shared;
 
-namespace AuthAPI.MediatR.Commands.Handlers
+namespace AuthAPI.Infrastructure.Handlers
 {
-    public class LoginCommandHandler(
+    public class LoginHandler(
         UserManager<AppUser> userManager,
         ITokenService tokenService,
-        ILogger<LoginCommandHandler> logger
-     ) : IRequestHandler<LoginCommand, Result<AuthResponseDTO>>
+        ILogger<LoginHandler> logger
+     ) : IRequestHandler<LoginCommand, HandlerResult<AuthResponseDTO>>
     {
-        public async Task<Result<AuthResponseDTO>> Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<HandlerResult<AuthResponseDTO>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
             var loginDTO = request.DTO;
 
             var user = await userManager.Users
-              .FirstOrDefaultAsync(x => x.UserName == loginDTO.Username.ToLower());
+              .FirstOrDefaultAsync(x => x.UserName == loginDTO.Username);
 
             if (user == null) 
-                return Result<AuthResponseDTO>.Failure(
+                return HandlerResult<AuthResponseDTO>.Failure(
                     new AppError("Invalid username", ErrorType.Unauthorized));
 
             var result = await userManager.CheckPasswordAsync(user, loginDTO.Password);
 
             if (!result)
-                return Result<AuthResponseDTO>.Failure(
+                return HandlerResult<AuthResponseDTO>.Failure(
                     new AppError("Invalid username", ErrorType.Unauthorized));
 
             logger.LogInformation($"User {user.UserName} was login successfuly");
 
-            return Result<AuthResponseDTO>.Success(new AuthResponseDTO()
+            return HandlerResult<AuthResponseDTO>.Success(new AuthResponseDTO()
             {
                 Username = user.UserName,
-                Token = await tokenService.CreateToken(user)
+                Token = await tokenService.GenerateAccessToken(user),
+                RefreshToken = await tokenService.GenerateRefreshToken(user)
             });
         }
     }

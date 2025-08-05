@@ -17,7 +17,6 @@ var app = builder.Build();
 app.MapDefaultEndpoints();
 app.UseDeveloperExceptionPage();
 
-
 //Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -28,10 +27,11 @@ if (app.Environment.IsDevelopment())
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 
+var userManager = services.GetRequiredService<UserManager<AppUser>>();
 var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
-await Seed.SeedRoles(roleManager);
+await Seed.SeedRoles(userManager, roleManager);
 
 app.MapEndpoints();
-app.MapControllers();
+//app.MapControllers();
 
 app.Run();

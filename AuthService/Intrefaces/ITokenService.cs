@@ -4,6 +4,7 @@ namespace AuthAPI.Intrefaces
 {
     public interface ITokenService
     {
-        Task<string> CreateToken(AppUser user);
+        Task<string> GenerateAccessToken(AppUser user);
+        Task<string> GenerateRefreshToken(AppUser user);
     }
 }

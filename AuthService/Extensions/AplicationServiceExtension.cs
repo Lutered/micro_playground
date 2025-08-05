@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using MassTransit.EntityFrameworkCoreIntegration;
 using AuthAPI.Data.Entities;
 using Microsoft.AspNetCore.Identity;
-using Contracts.Requests.User;
 using AuthAPI.Consumers;
 using System.Reflection;
+using AuthAPI.Data.Repositories;
 
 namespace AuthAPI.Extensions
 {
@@ -18,7 +18,7 @@ namespace AuthAPI.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
-            services.AddControllers();
+            //services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
@@ -44,14 +44,16 @@ namespace AuthAPI.Extensions
             });
 
             services.AddIdentityCore<AppUser>(opt => {})
-            .AddRoles<AppRole>()
-            .AddRoleManager<RoleManager<AppRole>>()
-            .AddEntityFrameworkStores<AppDbContext>();
+                .AddRoles<AppRole>()
+                .AddRoleManager<RoleManager<AppRole>>()
+                .AddEntityFrameworkStores<AppDbContext>();
 
             services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
+
+            services.AddScoped<IAuthRepository, AuthRepository>();
 
             return services;
         }

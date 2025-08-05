@@ -4,7 +4,7 @@ using AuthAPI.Mediator.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AuthAPI.Endpoints
+namespace AuthAPI.Infrastructure.Endpoints
 {
     public class Register : IEndpoint
     {
@@ -13,10 +13,11 @@ namespace AuthAPI.Endpoints
             app.MapPost("register", 
                 async (
                     [FromBody]RegisterDTO registerDTO,
-                    IMediator mediator
+                    IMediator mediator,
+                    CancellationToken cancellationToken
                 ) =>
                 {
-                    var result = await mediator.Send(new RegisterCommand(registerDTO));
+                    var result = await mediator.Send(new RegisterCommand(registerDTO), cancellationToken);
 
                     if (!result.IsSuccess)
                         return Results.BadRequest(result.Error.Message);

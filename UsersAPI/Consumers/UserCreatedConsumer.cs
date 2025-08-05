@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
-using Contracts.Requests.User;
 using MassTransit;
-using UsersAPI.Data;
+using Shared.Contracts;
 using UsersAPI.DTOs;
 using UsersAPI.Interfaces.Repositories;
-using Contracts.Responses;
 
 namespace UsersAPI.Consumers
 {

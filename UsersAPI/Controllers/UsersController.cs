@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Contracts.Requests.User;
 using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Contracts;
 using UsersAPI.DTOs;
 using UsersAPI.Helpers;
 using UsersAPI.Interfaces.Repositories;

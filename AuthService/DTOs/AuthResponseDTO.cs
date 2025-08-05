@@ -1,8 +1,9 @@
 ﻿namespace AuthAPI.DTOs
 {
-    public class AuthResponseDTO
+    public record class AuthResponseDTO
     {
-        public string Token { get; set; }
-        public string Username { get; set; }
+        public string Token { get; init; }
+        public string RefreshToken { get; init; }
+        public string Username { get; init; }
     }
 }
