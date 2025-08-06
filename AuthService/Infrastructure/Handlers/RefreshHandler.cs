@@ -10,23 +10,21 @@ using Shared;
 namespace AuthAPI.Infrastructure.Handlers
 {
     public class RefreshHandler(
-        AppDbContext _context,
+        IAuthRepository _authRepo,
         ITokenService _tokenService,
         ILogger<LoginHandler> _logger
      ) : IRequestHandler<RefreshCommand, HandlerResult<AuthResponseDTO>>
     {
         public async Task<HandlerResult<AuthResponseDTO>> Handle(RefreshCommand request, CancellationToken cancellationToken)
         {
-            var storedToken = await _context.RefreshTokens
-               .Include(t => t.User)
-               .FirstOrDefaultAsync(t => t.Token == request.Token);
+            var storedToken = await _authRepo.GetRefereshToken(request.Token);
 
             if (storedToken == null || storedToken.IsUsed
                 || storedToken.IsRevoked || storedToken.Expires < DateTime.UtcNow)
                 return HandlerResult<AuthResponseDTO>.Failure(new AppError("Token is not valid"));
 
             storedToken.IsUsed = true;
-            _context.RefreshTokens.Update(storedToken);
+            //_context.RefreshTokens.Update(storedToken);
 
             var user = storedToken.User;
             var newAccessToken = await _tokenService.GenerateAccessToken(user);
@@ -36,8 +34,8 @@ namespace AuthAPI.Infrastructure.Handlers
                 Expires = DateTime.UtcNow.AddDays(7)
             };
 
-            _context.RefreshTokens.Add(newRefreshToken);
-            await _context.SaveChangesAsync();
+            await _authRepo.AddRefreshToken(newRefreshToken);
+            await _authRepo.SaveChangesAsync();
 
             _logger.LogInformation($"Refresh token for user {user.UserName} was updated successfuly");
 

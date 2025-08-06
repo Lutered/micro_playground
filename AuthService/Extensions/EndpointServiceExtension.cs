@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace AuthAPI.Extensions
 {
-    public static class EndpointExtension
+    public static class EndpointServiceExtension
     {
         public static IServiceCollection AddEndpoints(this IServiceCollection services, Assembly assembly)
         {

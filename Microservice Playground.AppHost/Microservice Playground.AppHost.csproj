@@ -1,29 +1,29 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0" />
+	<Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0" />
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <IsAspireHost>true</IsAspireHost>
-    <UserSecretsId>e2e1f6df-f9c3-4eeb-b274-a9b0f5863a09</UserSecretsId>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsAspireHost>true</IsAspireHost>
+		<UserSecretsId>e2e1f6df-f9c3-4eeb-b274-a9b0f5863a09</UserSecretsId>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.3.1" />
-    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.3.0" />
-    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="9.3.1" />
-    <PackageReference Include="Aspire.Hosting.Redis" Version="9.3.0" />
-    <PackageReference Include="Elastic.Aspire.Hosting.Elasticsearch" Version="9.3.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting.AppHost" Version="9.3.1" />
+		<PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.3.0" />
+		<PackageReference Include="Aspire.Hosting.RabbitMQ" Version="9.3.1" />
+		<PackageReference Include="Aspire.Hosting.Redis" Version="9.3.0" />
+		<PackageReference Include="Elastic.Aspire.Hosting.Elasticsearch" Version="9.3.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\AuthService\AuthAPI.csproj" />
-    <ProjectReference Include="..\CoursesApi\CoursesApi.csproj" />
-    <ProjectReference Include="..\Gateway\Gateway.csproj" />
-    <ProjectReference Include="..\UsersAPI\UsersAPI.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\AuthService\AuthAPI.csproj" />
+		<ProjectReference Include="..\CoursesApi\CoursesApi.csproj" />
+		<ProjectReference Include="..\Gateway\Gateway.csproj" />
+		<ProjectReference Include="..\UsersAPI\UsersAPI.csproj" />
+	</ItemGroup>
 
 </Project>

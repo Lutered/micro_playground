@@ -19,6 +19,10 @@ namespace AuthAPI.Extensions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
             //services.AddControllers();
+
+            services.AddAuthentication();
+            services.AddAuthorization();
+
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
@@ -29,6 +33,7 @@ namespace AuthAPI.Extensions
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IAuthRepository, AuthRepository>();
 
             services.AddMassTransit(c =>
             {
@@ -43,17 +48,10 @@ namespace AuthAPI.Extensions
                 });
             });
 
-            services.AddIdentityCore<AppUser>(opt => {})
-                .AddRoles<AppRole>()
-                .AddRoleManager<RoleManager<AppRole>>()
-                .AddEntityFrameworkStores<AppDbContext>();
-
             services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
-
-            services.AddScoped<IAuthRepository, AuthRepository>();
 
             return services;
         }

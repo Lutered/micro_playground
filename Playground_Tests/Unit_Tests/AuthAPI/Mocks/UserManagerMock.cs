@@ -16,12 +16,22 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Mocks
 
             var existingUsers = new AppUser[]
             {
-                new AppUser { UserName = "existsinguser" }
+                new AppUser { UserName = "Existing_User" }
             };
+
+            mockUserManager
+               .Setup(um => um.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
+               .ReturnsAsync(IdentityResult.Success);
+
+            mockUserManager
+                .Setup(um => um.AddToRoleAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
+                .ReturnsAsync(IdentityResult.Success);
 
             mockUserManager
                 .Setup(um => um.Users)
                 .Returns(existingUsers.BuildMock());
+
+            return mockUserManager;
 
             return mockUserManager;
         }

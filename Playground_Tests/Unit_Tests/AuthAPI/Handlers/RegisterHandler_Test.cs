@@ -1,5 +1,4 @@
-﻿using AuthAPI.Controllers;
-using AuthAPI.Data.Entities;
+﻿using AuthAPI.Data.Entities;
 using AuthAPI.DTOs;
 using AuthAPI.Infrastructure.Handlers;
 using AuthAPI.Intrefaces;
@@ -8,14 +7,8 @@ using AuthAPI.Services;
 using AutoMapper;
 using FluentAssertions;
 using MassTransit;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using MockQueryable;
 using Moq;
-using Playground_Tests.AuthAPI;
 using Playground_Tests.Unit_Tests.AuthAPI.Mocks;
 using Shared.Contracts;
 
@@ -26,11 +19,11 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
         [Fact]
         public async Task ReturnsOk_WhenUserIsCreated()
         {
-            var configuration = GetConfiguration();
+            var configuration = ConfigurationMock.GetMock();
 
-            var mockUserManager = GetMockUserManager();
+            var mockUserManager = UserManagerMock.GetMock();
             var mockPublisher = GetPublisherMock();
-            var mockRepo = GetMockAuthRepo();
+            var mockRepo = AutoRepoMock.GetMock();
             var mockLogger = NullLogger<RegisterHandler>.Instance;
             var mockMapper = new Mock<IMapper>();
    
@@ -72,13 +65,12 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
         [Fact]
         public async Task ReturnsError_WhenUserNameExists()
         {
-            var configuration = GetConfiguration();
+            var configuration = ConfigurationMock.GetMock();
 
-            var mockUserManager = GetMockUserManager();
+            var mockUserManager = UserManagerMock.GetMock();
             var mockPublisher = GetPublisherMock();
-            var mockRepo = GetMockAuthRepo();
+            var mockRepo = AutoRepoMock.GetMock();
             var mockLogger = NullLogger<RegisterHandler>.Instance;
-           // var mockLogger = LoggerMock.GetMock<RegisterHandler>();
             var mockMapper = new Mock<IMapper>();
 
             string username = "Existing_User";
@@ -109,57 +101,6 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
 
             response.Should().NotBeNull();
             response.IsSuccess.Should().BeFalse();
-        }
-
-        private Mock<IAuthRepository> GetMockAuthRepo()
-        {
-            var mockAuthRepo = new Mock<IAuthRepository>();
-
-            mockAuthRepo
-              .Setup(r => r.AddRefreshToken(It.IsAny<RefreshToken>()));
-
-            mockAuthRepo
-                .Setup(r => r.SaveChangesAsync());
-
-            return mockAuthRepo;
-        }
-        private Mock<UserManager<AppUser>> GetMockUserManager()
-        {
-            var store = new Mock<IUserStore<AppUser>>();
-            var mockUserManager = new Mock<UserManager<AppUser>>(
-                store.Object, null, null, null, null, null, null, null, null
-            );
-
-            var existingUsers = new AppUser[]
-            {
-                new AppUser { UserName = "Existing_User" }
-            };
-
-            mockUserManager
-               .Setup(um => um.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
-               .ReturnsAsync(IdentityResult.Success);
-
-            mockUserManager
-                .Setup(um => um.AddToRoleAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
-                .ReturnsAsync(IdentityResult.Success);
-
-            mockUserManager
-                .Setup(um => um.Users)
-                .Returns(existingUsers.BuildMock());
-
-            return mockUserManager;
-        }
-        private IConfiguration GetConfiguration()
-        {
-            var configData = new Dictionary<string, string?> {
-                {"Authorization:SecretKeyPath", Config.TokenPath}
-            };
-
-            IConfiguration configuration = new ConfigurationBuilder()
-               .AddInMemoryCollection(configData)
-               .Build();
-
-            return configuration;
         }
         private Mock<IPublishEndpoint> GetPublisherMock()
         {
