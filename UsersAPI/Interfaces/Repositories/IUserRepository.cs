@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using UsersAPI.Data.Entities;
+﻿using UsersAPI.Data.Entities;
 using UsersAPI.DTOs;
 using UsersAPI.Helpers;
 
@@ -7,10 +6,14 @@ namespace UsersAPI.Interfaces.Repositories
 {
     public interface IUserRepository
     {
-        public Task<PagedList<AppUserDTO>> GetUsersAsync(int page, int pageSize);
-        public Task<AppUserDTO> GetUserAsync(string username);
-        public Task CreateUserAsync(AppUserDTO appUser);
-        public Task<bool> UpdateUserAsync(AppUserDTO appUser);
-        public Task DeleteUserAsync(string username);
+        public Task<bool> UserExists(string username);
+        public Task<User> GetUserAsync(string username, CancellationToken cancellationToken);
+        public Task<PagedList<AppUserDTO>> GetUsersAsync(int page, int pageSize, CancellationToken cancellationToken);
+
+        public void AddUser(User user);
+        public void RemoveUser(User user);
+        public void UpdateUser(User user);
+        public Task<bool> SaveChangesAsync(CancellationToken cancellationToken);
+        
     }
 }

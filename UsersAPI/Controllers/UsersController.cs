@@ -1,86 +1,77 @@
-﻿using AutoMapper;
-using MassTransit;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Contracts;
 using UsersAPI.DTOs;
 using UsersAPI.Helpers;
-using UsersAPI.Interfaces.Repositories;
+using UsersAPI.Infrastructure.Commands;
+using UsersAPI.Infrastructure.Queries;
 
 namespace UsersAPI.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("[controller]")]
-    public class UsersController : ControllerBase
+    public class UsersController(
+         IMediator mediator
+        ) : ControllerBase
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IPublishEndpoint _publishEndpoint;
-        private readonly ILogger<UsersController> _logger;
-        public UsersController(
-            IUserRepository userRepository, 
-            IPublishEndpoint publishEndpoint,
-            ILogger<UsersController> logger) 
-        {
-            _userRepository = userRepository;
-            _publishEndpoint = publishEndpoint;
-            _logger = logger;
-        }
-
         [HttpGet]
         [Route("get/{username}")]
-        public async Task<ActionResult<AppUserDTO>> GetUser(string username)
+        public async Task<ActionResult<AppUserDTO>> GetUser(
+            string username, 
+            CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUserAsync(username);
+            var result = await mediator.Send(new GetUserQuery(username), cancellationToken);
 
-            if(user == null) { return NotFound("User was not found"); }
+            if (!result.IsSuccess)
+                return BadRequest(result.Error.Message);
 
-            return user;
+            return Ok(result.Value);
         }
 
         [HttpGet]
         [Route("get")]
-        public async Task<ActionResult<PagedList<AppUserDTO>>> GetUsers([FromQuery]PageDTO pageParams)
+        public async Task<ActionResult<PagedList<AppUserDTO>>> GetUsers(
+            [FromQuery] PageDTO pageParams, 
+            CancellationToken cancellationToken)
         {
-            return await _userRepository.GetUsersAsync(pageParams.Page, pageParams.PageSize);
-        }
+            var result = await mediator.Send(new GetUsersQuery(pageParams), cancellationToken);
 
-        //[HttpPost]
-        //[Route("create")]
-        //public async Task<ActionResult> CreateUser(AppUserDTO appUser)
-        //{
-        //    try
-        //    {
-        //        await _userRepository.CreateUserAsync(appUser);
-        //        return Ok();
-        //    }
-        //    catch (Exception ex) 
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
+            if (!result.IsSuccess)
+                return BadRequest(result.Error.Message);
+
+            return Ok(result.Value);
+        }
 
         [HttpPut]
         [Route("update")]
-        public async Task<ActionResult> UpdateUser(AppUserDTO appUser)
+        public async Task<ActionResult> UpdateUser(
+            AppUserDTO appUser, 
+            CancellationToken cancellationToken)
         {
-            bool result = await _userRepository.UpdateUserAsync(appUser);
+            var result = await mediator.Send(new UpdateUserCommand(appUser), cancellationToken);
 
-            return result ? Ok() : NotFound();
+            if (!result.IsSuccess)
+                return result.Error.Type == Shared.HandlerErrorType.NotFound ? 
+                    NotFound() : 
+                    BadRequest(result.Error.Message);
+
+            return Ok(result.Value);
         }
 
         [HttpDelete]
         [Route("delete/{username}")]
-        public async Task<ActionResult> DeleteUser(string username)
+        public async Task<ActionResult> DeleteUser(
+            string username, 
+            CancellationToken cancellationToken)
         {
-            await _userRepository.DeleteUserAsync(username);
+            var result = await mediator.Send(new DeleteUserCommand(username), cancellationToken);
 
-            await _publishEndpoint.Publish<UserDeleted>(new UserDeleted
-            {
-                Username = username
-            });
+            if (!result.IsSuccess)
+                return result.Error.Type == Shared.HandlerErrorType.NotFound ?
+                    NotFound() :
+                    BadRequest(result.Error.Message);
 
-            return Ok();
+            return Ok(result.Value);
         }
     }
 }

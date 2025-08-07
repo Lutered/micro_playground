@@ -17,7 +17,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
     public class RegisterHandler_Test
     {
         [Fact]
-        public async Task ReturnsOk_WhenUserIsCreated()
+        public async Task ReturnsOk()
         {
             var configuration = ConfigurationMock.GetMock();
 

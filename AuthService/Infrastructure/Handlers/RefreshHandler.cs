@@ -4,7 +4,6 @@ using AuthAPI.DTOs;
 using AuthAPI.Intrefaces;
 using AuthAPI.MediatR.Commands;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Shared;
 
 namespace AuthAPI.Infrastructure.Handlers
@@ -21,7 +20,7 @@ namespace AuthAPI.Infrastructure.Handlers
 
             if (storedToken == null || storedToken.IsUsed
                 || storedToken.IsRevoked || storedToken.Expires < DateTime.UtcNow)
-                return HandlerResult<AuthResponseDTO>.Failure(new AppError("Token is not valid"));
+                return HandlerResult<AuthResponseDTO>.Failure(new HandlerError("Token is not valid"));
 
             storedToken.IsUsed = true;
             //_context.RefreshTokens.Update(storedToken);

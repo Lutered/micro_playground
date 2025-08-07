@@ -15,7 +15,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
     public class LoginHandler_Test
     {
         [Fact]
-        public async Task Login_ReturnsOk()
+        public async Task ReturnsOk()
         {
             var configuration = ConfigurationMock.GetMock();
 
@@ -62,7 +62,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
         }
 
         [Fact]
-        public async Task Login_ReturnsError_WhenPasswordWrong()
+        public async Task ReturnsError_WhenPasswordWrong()
         {
             var configuration = ConfigurationMock.GetMock();
 
@@ -101,7 +101,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
 
             response.Should().NotBeNull();
             response.IsSuccess.Should().BeFalse();
-            response.Error.Type.Should().Be(Shared.ErrorType.Unauthorized);
+            response.Error.Type.Should().Be(Shared.HandlerErrorType.Unauthorized);
         }
     }
 }

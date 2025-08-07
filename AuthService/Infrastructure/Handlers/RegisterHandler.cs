@@ -26,9 +26,8 @@ namespace AuthAPI.Infrastructure.Handlers
 
             if (await _userManager.UserExistsAsync(registerDTO.Username))
                 return HandlerResult<AuthResponseDTO>.Failure(
-                        new AppError(
-                            $"User with username {registerDTO.Username} already exists", 
-                            ErrorType.Conflict));
+                        new HandlerError(
+                            $"User with username {registerDTO.Username} already exists"));
 
             var user = _mapper.Map<AppUser>(registerDTO);
 
@@ -36,7 +35,7 @@ namespace AuthAPI.Infrastructure.Handlers
 
             if (!result.Succeeded)
                 return HandlerResult<AuthResponseDTO>.Failure(
-                    new AppError(
+                    new HandlerError(
                         string.Join("; ", result.Errors.Select(e => e.Description)), 
                         null));
 
@@ -44,7 +43,7 @@ namespace AuthAPI.Infrastructure.Handlers
 
             if (!roleResult.Succeeded)
                 return HandlerResult<AuthResponseDTO>.Failure(
-                    new AppError(
+                    new HandlerError(
                         string.Join("; ", roleResult.Errors.Select(e => e.Description)),
                         null));
 

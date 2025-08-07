@@ -5,53 +5,58 @@ namespace UsersAPI.Extensions
 {
     public static class IDistributedCacheExtension
     {
-        private static readonly TimeSpan expirationTime = TimeSpan.FromMinutes(20);
+        private static readonly TimeSpan expirationTime = TimeSpan.FromMinutes(30);
 
-        public static async Task<string> GetAsync(
+        public static async Task<string> GetRawAsync(
             this IDistributedCache distributedCache, 
+            string key)
+        {
+            return await distributedCache.GetStringAsync(key);
+        }
+
+        public static async Task<T> GetAsync<T>(
+            this IDistributedCache distributedCache,
             string key)
         {
             var cacheData = await distributedCache.GetStringAsync(key);
 
-            if(cacheData != null) await distributedCache.RefreshAsync(key);
+            if (cacheData is null) return default(T);
 
-            return cacheData;
+            return JsonSerializer.Deserialize<T>(cacheData);
         }
 
-        public static async Task<T> GetObjectOrCreateAsync<T>(
-            this IDistributedCache distributedCache, 
-            string key, 
-            Func<Task<T>> executeFn)
+        public static async Task<bool> CreateRawAsync(
+            this IDistributedCache distributedCache,
+            string key,
+            string value
+            )
         {
-            var cacheData = await distributedCache.GetStringAsync(key);
-
-            if (cacheData != null)
+            try
             {
-                await distributedCache.RefreshAsync(key);
-                return JsonSerializer.Deserialize<T>(cacheData);
+                await distributedCache.SetStringAsync(key, value, new DistributedCacheEntryOptions
+                {
+                    SlidingExpiration = expirationTime
+                });
+
+                return true;
             }
-
-            var data = await executeFn();
-
-            cacheData = JsonSerializer.Serialize(data);
-
-            await distributedCache.SetStringAsync(key, cacheData, new DistributedCacheEntryOptions
-            {
-                SlidingExpiration = expirationTime
-            });
-
-            return data;
+            catch { return false; }
         }
 
-        public static async Task UpdateOrCreateAsync(this IDistributedCache distributedCache, string key, string value)
+        public static async Task<bool> CreateAsync<T>(
+            this IDistributedCache distributedCache,
+            string key,
+            T value)
         {
-            await distributedCache.SetStringAsync(key, value, new DistributedCacheEntryOptions
-            {
-                SlidingExpiration = expirationTime
-            });
+            var cacheData = JsonSerializer.Serialize(value);
+
+            return await distributedCache.CreateRawAsync(key, cacheData);
         }
 
-        public static async Task<uint> GetVersionAsync(this IDistributedCache distributedCache, string key)
+        public static async Task<uint> GetVersionAsync(
+            this IDistributedCache distributedCache, 
+            string key
+        )
         {
             string fullKey = $"{key}:version";
             var versionStr = await distributedCache.GetStringAsync(fullKey);
@@ -59,14 +64,19 @@ namespace UsersAPI.Extensions
             if(versionStr == null)
             {
                 versionStr = "1";
-                await distributedCache.SetStringAsync(fullKey, versionStr);
+                await distributedCache.SetStringAsync(fullKey, versionStr,
+                    new DistributedCacheEntryOptions
+                    {
+                        SlidingExpiration = expirationTime.Add(expirationTime)
+                    });
             }
-            else await distributedCache.RefreshAsync(fullKey);
 
             return UInt32.Parse(versionStr);
         }
 
-        public static async Task UpdateVersionAsync(this IDistributedCache distributedCache, string key)
+        public static async Task UpdateVersionAsync(
+            this IDistributedCache distributedCache, 
+            string key)
         {
             string fullKey = $"{key}:version";
             var versionStr = await distributedCache.GetStringAsync(fullKey);

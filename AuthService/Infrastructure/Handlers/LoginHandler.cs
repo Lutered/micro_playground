@@ -24,13 +24,13 @@ namespace AuthAPI.Infrastructure.Handlers
 
             if (user == null) 
                 return HandlerResult<AuthResponseDTO>.Failure(
-                    new AppError("Invalid username", ErrorType.Unauthorized));
+                    new HandlerError("Invalid username", HandlerErrorType.Unauthorized));
 
             var result = await userManager.CheckPasswordAsync(user, loginDTO.Password);
 
             if (!result)
                 return HandlerResult<AuthResponseDTO>.Failure(
-                    new AppError("Invalid username", ErrorType.Unauthorized));
+                    new HandlerError("Invalid username", HandlerErrorType.Unauthorized));
 
             logger.LogInformation($"User {user.UserName} was login successfuly");
 

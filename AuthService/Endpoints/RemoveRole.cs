@@ -3,7 +3,7 @@ using AuthAPI.Intrefaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AuthAPI.Infrastructure.Endpoints
+namespace AuthAPI.Endpoints
 {
     public class RemoveRole : IEndpoint
     {

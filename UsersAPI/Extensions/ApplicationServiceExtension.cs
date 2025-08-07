@@ -6,6 +6,7 @@ using UsersAPI.Consumers;
 using UsersAPI.Data;
 using UsersAPI.Interfaces;
 using UsersAPI.Interfaces.Repositories;
+using System.Reflection;
 
 namespace UsersAPI.Extensions
 {
@@ -38,6 +39,11 @@ namespace UsersAPI.Extensions
 
             services.AddStackExchangeRedisCache(options => {
                 options.Configuration = config.GetConnectionString("redis");
+            });
+
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
 
             services.AddScoped<IUserRepository, UserRepository>();

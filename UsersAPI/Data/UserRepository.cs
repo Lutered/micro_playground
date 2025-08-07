@@ -1,104 +1,63 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
 using UsersAPI.Data.Entities;
 using UsersAPI.DTOs;
-using UsersAPI.Extensions;
 using UsersAPI.Helpers;
 using UsersAPI.Interfaces.Repositories;
 
 namespace UsersAPI.Data
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository(
+        AppDbContext _context,
+        IMapper _mapper
+    ) : IUserRepository
     {
-        //Temporary cache implementation
-        private readonly string _cachePrefix = "usersrep";
-
-        private readonly AppDbContext _context;
-        private readonly IMapper _mapper;
-        private readonly IDistributedCache _cache;
-
-        public UserRepository(
-            AppDbContext context,
-            IMapper mapper,
-            IDistributedCache distributedCache
-          )
+        public async Task<bool> UserExists(string username)
         {
-            _context = context;
-            _mapper = mapper;
-            _cache = distributedCache;
+            return await _context.Users.AnyAsync(x => x.Username == username);
         }
-        public async Task<PagedList<AppUserDTO>> GetUsersAsync(int page, int pageSize)
+        public async Task<User> GetUserAsync(string username, CancellationToken cancellationToken)
         {
-            var version = await _cache.GetVersionAsync($"{_cachePrefix}:users");
-
-            return await _cache.GetObjectOrCreateAsync<PagedList<AppUserDTO>>(
-                $"{_cachePrefix}:users:{version}:{page}:{pageSize}", 
-                async () => 
-                {
-                    int skipRecords = (page - 1) * pageSize;
-
-                    var usersQuery = _context.Users
-                                .Skip(skipRecords)
-                                .Take(pageSize);
-
-                    var query = usersQuery
-                                .AsNoTracking()
-                                .ProjectTo<AppUserDTO>(_mapper.ConfigurationProvider);
-
-                    return await PagedList<AppUserDTO>.CreateAsync(
-                        query,
-                        page,
-                        pageSize);
-                });
-        }
-        public async Task<AppUserDTO> GetUserAsync(string username)
-        {
-            return await _cache.GetObjectOrCreateAsync<AppUserDTO>(
-                $"{_cachePrefix}:user:{username.ToString()}", 
-                async () =>
-                {
-                    return _mapper.Map<User, AppUserDTO>(
-                        await _context.Users.FirstOrDefaultAsync(x => x.Username == username)
-                     );
-                });
+            return await _context.Users.FirstOrDefaultAsync(x => x.Username == username, cancellationToken);
         }
 
-        public async Task<bool> UpdateUserAsync(AppUserDTO userUpdated)
+        public async Task<PagedList<AppUserDTO>> GetUsersAsync(int page, int pageSize, CancellationToken cancellationToken)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == userUpdated.UserName);
+            int skipRecords = (page - 1) * pageSize;
 
-            if (user == null)
-                return false;
+            var usersQuery = _context.Users
+                        .Skip(skipRecords)
+                        .Take(pageSize);
 
-            _mapper.Map(userUpdated, user);
+            var query = usersQuery
+                        .AsNoTracking()
+                        .ProjectTo<AppUserDTO>(_mapper.ConfigurationProvider);
 
-            await _context.SaveChangesAsync();
-
-            return true;
+            return await PagedList<AppUserDTO>.CreateAsync(
+                query,
+                page,
+                pageSize);
         }
 
-        public async Task CreateUserAsync(AppUserDTO appUser)
+        public void AddUser(User user)
         {
-            var user = _mapper.Map<AppUserDTO, User>(appUser);
-
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
-
-            await _cache.UpdateVersionAsync($"{_cachePrefix}:users");
+            _context.Users.Add(user);
         }
 
-        public async Task DeleteUserAsync(string username)
+        public void RemoveUser(User user)
         {
-            var user = _context.Users.First(x => x.Username == username);
-
             _context.Users.Remove(user);
+        }
 
-            await _context.SaveChangesAsync();
+        public void UpdateUser(User user)
+        {
+            _context.Users.Update(user);
+        }
 
-            await _cache.UpdateVersionAsync($"{_cachePrefix}:users");
-            await _cache.RemoveAsync($"{_cachePrefix}:user:{username.ToString()}");
+        public async Task<bool> SaveChangesAsync(CancellationToken cancellationToken)
+        {
+            return await _context.SaveChangesAsync(cancellationToken) > 0;
         }
     }
 }

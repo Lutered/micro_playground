@@ -1,29 +1,30 @@
-﻿using AuthAPI.Infrastructure.Commands;
+﻿using AuthAPI.DTOs;
 using AuthAPI.Intrefaces;
+using AuthAPI.MediatR.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AuthAPI.Infrastructure.Endpoints
+namespace AuthAPI.Endpoints
 {
-    public class AddRole : IEndpoint
+    public class Login : IEndpoint
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapPost("addRole",
+            app.MapPost("login",
                 async (
-                    [FromBody] Shared.Contracts.Requests.User.AddRole addRoleDTO,
+                    [FromBody] LoginDTO loginDTO,
                     IMediator mediator,
                     CancellationToken cancellationToken
                 ) =>
                 {
-                    var result = await mediator.Send(new AddRoleCommand(addRoleDTO.Username, addRoleDTO.RoleName), cancellationToken);
+                    var result = await mediator.Send(new LoginCommand(loginDTO), cancellationToken);
 
                     if (!result.IsSuccess)
                         return Results.BadRequest(result.Error.Message);
 
                     return Results.Ok(result.Value);
                 }
-            ).RequireAuthorization(policy => policy.RequireRole("Admin"));
+            );
         }
     }
 }

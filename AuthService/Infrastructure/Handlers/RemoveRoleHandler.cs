@@ -19,7 +19,7 @@ namespace AuthAPI.Infrastructure.Handlers
               .FirstOrDefaultAsync(x => x.UserName == request.Username.ToLower());
 
             if (user is null)
-                return HandlerResult<bool>.Failure(new AppError("User was not found", ErrorType.NotFound));
+                return HandlerResult<bool>.Failure(new HandlerError("User was not found", HandlerErrorType.NotFound));
 
             try
             {
@@ -28,7 +28,7 @@ namespace AuthAPI.Infrastructure.Handlers
             catch (Exception ex)
             {
                 logger.LogError(ex.Message);
-                return HandlerResult<bool>.Failure(new AppError(ex.Message, ErrorType.Internal));
+                return HandlerResult<bool>.Failure(new HandlerError(ex.Message, HandlerErrorType.Internal));
             }
 
             return HandlerResult<bool>.Success(true);

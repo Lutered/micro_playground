@@ -4,12 +4,12 @@
     {
         public bool IsSuccess { get; }
         public T? Value { get; }
-        public AppError Error { get; }
+        public HandlerError Error { get; }
 
         private HandlerResult(
             bool isSuccess, 
             T? value,
-            AppError error
+            HandlerError error
          ) 
         {
             IsSuccess = isSuccess;
@@ -20,23 +20,23 @@
         public static HandlerResult<T> Success(T value)
             => new HandlerResult<T>(true, value, null);
 
-        public static HandlerResult<T> Failure(AppError error)
+        public static HandlerResult<T> Failure(HandlerError error)
             => new HandlerResult<T>(false, default, error);
     }
 
-    public class AppError
+    public class HandlerError
     {
         public string Message { get; init; }
-        public ErrorType? Type { get; init; } 
+        public HandlerErrorType? Type { get; init; } 
 
-        public AppError(string message, ErrorType? type = null)
+        public HandlerError(string message, HandlerErrorType? type = null)
         {
             Message = message;
             Type = type;
         }
     }
 
-    public enum ErrorType
+    public enum HandlerErrorType
     {
         Validation,
         NotFound,

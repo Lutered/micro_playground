@@ -5,6 +5,7 @@ using UsersAPI.Extensions;
 using Serilog.Formatting.Elasticsearch;
 using System.Runtime.Serialization;
 using UsersAPI.Middlewares;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,20 +15,8 @@ builder.Services.AddMvcCore();
 
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
-
-Log.Logger = new LoggerConfiguration()
-          .Enrich.FromLogContext()
-          .WriteTo.Console()
-          .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(
-              new Uri(builder.Configuration.GetConnectionString("elasticsearch")))
-          {
-              AutoRegisterTemplate = true,
-              IndexFormat = "users-logs-{0:yyyy.MM.dd}",
-              Period = TimeSpan.FromMilliseconds(500)
-          })
-          .CreateLogger();
-
-builder.Host.UseSerilog();
+builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
+builder.Services.AddLogs(builder.Configuration, builder.Host);
 
 var app = builder.Build();
 
@@ -46,6 +35,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.MapEndpoints();
 app.MapControllers();
 
 app.Run();
