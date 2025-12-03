@@ -1,6 +1,5 @@
 ﻿using AuthAPI.Sagas.Instances;
 using MassTransit;
-using Shared.Contracts;
 
 namespace AuthAPI.Sagas
 {

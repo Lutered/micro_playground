@@ -1,8 +1,8 @@
 ﻿using MassTransit;
 using MediatR;
-using Shared.Contracts;
+using Shared.Models.Contracts.Requests.User;
 using UsersAPI.DTOs;
-using UsersAPI.Infrastructure.Commands;
+using UsersAPI.Features.Commands.CreateUser;
 
 namespace UsersAPI.Consumers
 {

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Shared.Contracts;
+using Shared.Models.Contracts.Requests.User;
 using UsersAPI.Data.Entities;
 using UsersAPI.DTOs;
 

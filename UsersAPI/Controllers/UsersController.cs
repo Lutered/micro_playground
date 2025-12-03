@@ -2,76 +2,59 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UsersAPI.DTOs;
-using UsersAPI.Helpers;
-using UsersAPI.Infrastructure.Commands;
-using UsersAPI.Infrastructure.Queries;
+using UsersAPI.Features.Queries.GetUsers;
+using UsersAPI.Features.Queries.GetUser;
+using UsersAPI.Features.Commands.UpdateUser;
+using UsersAPI.Features.Commands.DeleteUser;
 
 namespace UsersAPI.Controllers
 {
     [Authorize]
     [ApiController]
+    [Route("{controller}")]
+    [Produces("application/json")]
     public class UsersController(
          IMediator mediator
         ) : ControllerBase
     {
         [HttpGet]
-        [Route("get/{username}")]
-        public async Task<ActionResult<AppUserDTO>> GetUser(
+        public async Task<IActionResult> GetUsers(
+           [FromQuery] PageDTO pageParams,
+           CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(new GetUsersQuery(pageParams), cancellationToken);
+
+            return result.ToActionResult();
+        }
+
+        [HttpGet("{username}")]
+        public async Task<IActionResult> GetUser(
             string username, 
             CancellationToken cancellationToken)
         {
             var result = await mediator.Send(new GetUserQuery(username), cancellationToken);
 
-            if (!result.IsSuccess)
-                return BadRequest(result.Error.Message);
-
-            return Ok(result.Value);
-        }
-
-        [HttpGet]
-        [Route("get")]
-        public async Task<ActionResult<PagedList<AppUserDTO>>> GetUsers(
-            [FromQuery] PageDTO pageParams, 
-            CancellationToken cancellationToken)
-        {
-            var result = await mediator.Send(new GetUsersQuery(pageParams), cancellationToken);
-
-            if (!result.IsSuccess)
-                return BadRequest(result.Error.Message);
-
-            return Ok(result.Value);
+            return result.ToActionResult();
         }
 
         [HttpPut]
-        [Route("update")]
-        public async Task<ActionResult> UpdateUser(
+        public async Task<IActionResult> UpdateUser(
             AppUserDTO appUser, 
             CancellationToken cancellationToken)
         {
             var result = await mediator.Send(new UpdateUserCommand(appUser), cancellationToken);
 
-            if (!result.IsSuccess)
-                return result.Error.Type == Shared.HandlerErrorType.NotFound ? 
-                    NotFound() : 
-                    BadRequest(result.Error.Message);
-
-            return Ok(result.Value);
+            return result.ToActionResult();
         }
 
-        [HttpDelete]
-        [Route("delete/{username}")]
-        public async Task<ActionResult> DeleteUser(
+        [HttpDelete("{username}")]
+        public async Task<IActionResult> DeleteUser(
             string username, 
             CancellationToken cancellationToken)
         {
             var result = await mediator.Send(new DeleteUserCommand(username), cancellationToken);
 
-            if (!result.IsSuccess)
-                return result.Error.Type == Shared.HandlerErrorType.NotFound ?
-                    NotFound() :
-                    BadRequest(result.Error.Message);
-
-            return Ok(result.Value);
+            return result.ToActionResult();
         }
     }
 }

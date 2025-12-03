@@ -1,6 +1,6 @@
-﻿using UsersAPI.Data.Entities;
+﻿using Shared.Models.Common;
+using UsersAPI.Data.Entities;
 using UsersAPI.DTOs;
-using UsersAPI.Helpers;
 
 namespace UsersAPI.Interfaces.Repositories
 {

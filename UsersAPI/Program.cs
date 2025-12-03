@@ -1,11 +1,8 @@
 
-using Serilog.Sinks.Elasticsearch;
-using Serilog;
 using UsersAPI.Extensions;
-using Serilog.Formatting.Elasticsearch;
-using System.Runtime.Serialization;
-using UsersAPI.Middlewares;
 using System.Reflection;
+using Shared.Extensions;
+using Shared.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 

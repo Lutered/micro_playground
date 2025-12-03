@@ -1,7 +1,8 @@
-﻿using AuthAPI.Infrastructure.Commands;
+﻿using AuthAPI.Features.Commands.RemoveRole;
 using AuthAPI.Intrefaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Interfaces.Common;
 
 namespace AuthAPI.Endpoints
 {
@@ -11,17 +12,14 @@ namespace AuthAPI.Endpoints
         {
             app.MapPost("removeRole",
                 async (
-                    [FromBody] Shared.Contracts.Requests.User.RemoveRole removeRoleDTO,
+                    [FromBody] Shared.Models.Contracts.Requests.User.RemoveRole removeRoleDTO,
                     IMediator mediator,
                     CancellationToken cancellationToken
                 ) =>
                 {
                     var result = await mediator.Send(new RemoveRoleCommand(removeRoleDTO.Username, removeRoleDTO.RoleName), cancellationToken);
 
-                    if (!result.IsSuccess)
-                        return Results.BadRequest(result.Error.Message);
-
-                    return Results.Ok(result.Value);
+                    return (IResult)result.ToActionResult();
                 }
             ).RequireAuthorization(policy => policy.RequireRole("Admin"));
         }

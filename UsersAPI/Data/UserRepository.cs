@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using Shared.Extensions;
+using Shared.Models.Common;
 using UsersAPI.Data.Entities;
 using UsersAPI.DTOs;
-using UsersAPI.Helpers;
 using UsersAPI.Interfaces.Repositories;
 
 namespace UsersAPI.Data
@@ -24,20 +25,10 @@ namespace UsersAPI.Data
 
         public async Task<PagedList<AppUserDTO>> GetUsersAsync(int page, int pageSize, CancellationToken cancellationToken)
         {
-            int skipRecords = (page - 1) * pageSize;
-
-            var usersQuery = _context.Users
-                        .Skip(skipRecords)
-                        .Take(pageSize);
-
-            var query = usersQuery
+            return await _context.Users
                         .AsNoTracking()
-                        .ProjectTo<AppUserDTO>(_mapper.ConfigurationProvider);
-
-            return await PagedList<AppUserDTO>.CreateAsync(
-                query,
-                page,
-                pageSize);
+                        .ProjectTo<AppUserDTO>(_mapper.ConfigurationProvider)
+                        .ToPagedListAsync(page, pageSize);
         }
 
         public void AddUser(User user)

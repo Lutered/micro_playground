@@ -1,7 +1,8 @@
-﻿using AuthAPI.Infrastructure.Commands;
+﻿using AuthAPI.Features.Commands.AddRole;
 using AuthAPI.Intrefaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Interfaces.Common;
 
 namespace AuthAPI.Endpoints
 {
@@ -11,17 +12,15 @@ namespace AuthAPI.Endpoints
         {
             app.MapPost("addRole",
                 async (
-                    [FromBody] Shared.Contracts.Requests.User.AddRole addRoleDTO,
+                    [FromBody] Shared.Models.Contracts.Requests.User.AddRole addRoleDTO,
                     IMediator mediator,
                     CancellationToken cancellationToken
                 ) =>
                 {
                     var result = await mediator.Send(new AddRoleCommand(addRoleDTO.Username, addRoleDTO.RoleName), cancellationToken);
 
-                    if (!result.IsSuccess)
-                        return Results.BadRequest(result.Error.Message);
+                    return (IResult)result.ToActionResult();
 
-                    return Results.Ok(result.Value);
                 }
             ).RequireAuthorization(policy => policy.RequireRole("Admin"));
         }

@@ -1,5 +1,6 @@
 ﻿using AuthAPI.Data.Entities;
-using AuthAPI.DTOs;
+using AuthAPI.Models;
+using AuthAPI.Features.Commands.Register;
 using AutoMapper;
 
 namespace AuthAPI.Helpers

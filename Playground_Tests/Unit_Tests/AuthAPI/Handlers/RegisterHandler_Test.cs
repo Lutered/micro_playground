@@ -1,6 +1,6 @@
 ﻿using AuthAPI.Data.Entities;
-using AuthAPI.DTOs;
-using AuthAPI.Infrastructure.Handlers;
+using AuthAPI.Models;
+using AuthAPI.Features.Commands.Register;
 using AuthAPI.Intrefaces;
 using AuthAPI.Mediator.Commands;
 using AuthAPI.Services;
@@ -10,7 +10,7 @@ using MassTransit;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Playground_Tests.Unit_Tests.AuthAPI.Mocks;
-using Shared.Contracts;
+using Shared.Models.Contracts.Requests.User;
 
 namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
 {
@@ -24,7 +24,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
             var mockUserManager = UserManagerMock.GetMock();
             var mockPublisher = GetPublisherMock();
             var mockRepo = AutoRepoMock.GetMock();
-            var mockLogger = NullLogger<RegisterHandler>.Instance;
+            var mockLogger = NullLogger<RegisterCommandHandler>.Instance;
             var mockMapper = new Mock<IMapper>();
    
             string username = "TestUser";
@@ -43,7 +43,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
 
             var tokenService = new TokenService(mockRepo.Object, configuration, mockUserManager.Object);
 
-            var registerHandler = new RegisterHandler(
+            var registerHandler = new RegisterCommandHandler(
                 mockUserManager.Object,
                 mockMapper.Object,
                 tokenService,
@@ -70,7 +70,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
             var mockUserManager = UserManagerMock.GetMock();
             var mockPublisher = GetPublisherMock();
             var mockRepo = AutoRepoMock.GetMock();
-            var mockLogger = NullLogger<RegisterHandler>.Instance;
+            var mockLogger = NullLogger<RegisterCommandHandler>.Instance;
             var mockMapper = new Mock<IMapper>();
 
             string username = "Existing_User";
@@ -89,7 +89,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
 
             var tokenService = new TokenService(mockRepo.Object, configuration, mockUserManager.Object);
 
-            var registerHandler = new RegisterHandler(
+            var registerHandler = new RegisterCommandHandler(
                 mockUserManager.Object,
                 mockMapper.Object,
                 tokenService,

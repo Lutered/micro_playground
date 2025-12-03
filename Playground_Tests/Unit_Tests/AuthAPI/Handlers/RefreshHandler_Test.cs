@@ -1,5 +1,6 @@
 ﻿using AuthAPI.Data.Entities;
-using AuthAPI.DTOs;
+using AuthAPI.Models;
+using AuthAPI.Features.Commands.Login;
 using AuthAPI.Infrastructure.Handlers;
 using AuthAPI.MediatR.Commands;
 using AuthAPI.Services;
@@ -18,7 +19,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
 
             var mockUserManager = UserManagerMock.GetMock();
             var mockRepo = AutoRepoMock.GetMock();
-            var mockLogger = NullLogger<LoginHandler>.Instance;
+            var mockLogger = NullLogger<LoginCommandHandler>.Instance;
 
             string refreshToken = "correct_token";
 

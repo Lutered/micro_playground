@@ -1,7 +1,8 @@
-﻿using AuthAPI.Intrefaces;
-using AuthAPI.MediatR.Commands;
+﻿using AuthAPI.Features.Commands.Refresh;
+using AuthAPI.Intrefaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Interfaces.Common;
 
 namespace AuthAPI.Endpoints
 {
@@ -18,10 +19,7 @@ namespace AuthAPI.Endpoints
                 {
                     var result = await mediator.Send(new RefreshCommand(refreshToken), cancellationToken);
 
-                    if (!result.IsSuccess)
-                        return Results.BadRequest(result.Error.Message);
-
-                    return Results.Ok(result.Value);
+                    return (IResult)result.ToActionResult();
                 }
             );
         }

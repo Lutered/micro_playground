@@ -1,8 +1,8 @@
-﻿using AuthAPI.DTOs;
+﻿using AuthAPI.Features.Commands.Register;
 using AuthAPI.Intrefaces;
-using AuthAPI.Mediator.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Interfaces.Common;
 
 namespace AuthAPI.Endpoints
 {
@@ -19,10 +19,7 @@ namespace AuthAPI.Endpoints
                 {
                     var result = await mediator.Send(new RegisterCommand(registerDTO), cancellationToken);
 
-                    if (!result.IsSuccess)
-                        return Results.BadRequest(result.Error.Message);
-
-                    return Results.Ok(result.Value);
+                    return (IResult)result.ToActionResult();
                 }
             );
         }

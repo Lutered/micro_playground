@@ -30,7 +30,9 @@
 
   <ItemGroup>
     <Folder Include="Configuration\" />
+    <Folder Include="Data\Repositories\" />
     <Folder Include="Endpoints\" />
+    <Folder Include="Middlewares\" />
     <Folder Include="PrivateStaticFiles\" />
     <Folder Include="Services\" />
   </ItemGroup>

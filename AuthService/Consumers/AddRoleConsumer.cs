@@ -1,7 +1,7 @@
-﻿using AuthAPI.Infrastructure.Commands;
+﻿using AuthAPI.Features.Commands.AddRole;
 using MassTransit;
 using MediatR;
-using Shared.Contracts.Requests.User;
+using Shared.Models.Contracts.Requests.User;
 
 namespace AuthAPI.Consumers
 {

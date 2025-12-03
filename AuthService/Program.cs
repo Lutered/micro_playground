@@ -1,9 +1,10 @@
 using AuthAPI.Data;
 using AuthAPI.Data.Entities;
 using AuthAPI.Extensions;
-using AuthAPI.Middlewares;
 using Microsoft.AspNetCore.Identity;
 using System.Reflection;
+using Shared.Extensions;
+using Shared.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();

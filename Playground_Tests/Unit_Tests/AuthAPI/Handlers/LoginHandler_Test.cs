@@ -1,6 +1,6 @@
 ﻿using AuthAPI.Data.Entities;
-using AuthAPI.DTOs;
-using AuthAPI.Infrastructure.Handlers;
+using AuthAPI.Models;
+using AuthAPI.Features.Commands.Login;
 using AuthAPI.Mediator.Commands;
 using AuthAPI.MediatR.Commands;
 using AuthAPI.Services;
@@ -9,6 +9,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Playground_Tests.Unit_Tests.AuthAPI.Mocks;
+using Shared.Models.Common;
 
 namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
 {
@@ -21,7 +22,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
 
             var mockUserManager = UserManagerMock.GetMock();
             var mockRepo = AutoRepoMock.GetMock();
-            var mockLogger = NullLogger<LoginHandler>.Instance;
+            var mockLogger = NullLogger<LoginCommandHandler>.Instance;
             var mockMapper = new Mock<IMapper>();
 
             string username = "Existing_User";
@@ -44,7 +45,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
                 configuration, 
                 mockUserManager.Object);
 
-            var loginHandler = new LoginHandler(
+            var loginHandler = new LoginCommandHandler(
                 mockUserManager.Object,
                 tokenService,
                 mockLogger
@@ -68,7 +69,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
 
             var mockUserManager = UserManagerMock.GetMock();
             var mockRepo = AutoRepoMock.GetMock();
-            var mockLogger = NullLogger<LoginHandler>.Instance;
+            var mockLogger = NullLogger<LoginCommandHandler>.Instance;
             var mockMapper = new Mock<IMapper>();
 
             string username = "Existing_User";
@@ -91,7 +92,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
                 configuration,
                 mockUserManager.Object);
 
-            var loginHandler = new LoginHandler(
+            var loginHandler = new LoginCommandHandler(
                 mockUserManager.Object,
                 tokenService,
                 mockLogger
@@ -101,7 +102,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
 
             response.Should().NotBeNull();
             response.IsSuccess.Should().BeFalse();
-            response.Error.Type.Should().Be(Shared.HandlerErrorType.Unauthorized);
+            response.Error.Type.Should().Be(HandlerErrorType.Unauthorized);
         }
     }
 }

@@ -7,10 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Contracts\Responses\User\" />
-	<Content Include="Files\public.key">
+    <Folder Include="Models\Contracts\Responses\User\" />
+	<Content Include="Static\public.key">
 		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</Content>
+	<Folder Include="Models\DTOs\" />
   </ItemGroup>
 
 </Project>

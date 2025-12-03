@@ -2,7 +2,7 @@
 using MassTransit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Shared.Contracts;
+using Shared.Models.Contracts.Requests.User;
 
 namespace AuthAPI.Consumers
 {

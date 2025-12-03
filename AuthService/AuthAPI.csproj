@@ -16,6 +16,8 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" />
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
     <PackageReference Include="MassTransit.AspNetCore" />
     <PackageReference Include="MassTransit.EntityFrameworkCore" />
     <PackageReference Include="MassTransit.RabbitMQ" />
@@ -37,7 +39,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Infrastructure\Queries\" />
+    <Folder Include="Features\Queries\" />
+    <Folder Include="Middlewares\" />
   </ItemGroup>
 
 </Project>
