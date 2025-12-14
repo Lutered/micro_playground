@@ -6,20 +6,20 @@ namespace AuthAPI.Data.Repositories
 {
     public class AuthRepository(AuthContext _context) : IAuthRepository
     {
-        public async Task<RefreshToken> GetRefereshToken(string refresh)
+        public async Task<RefreshToken> GetRefereshToken(string refreshToken, CancellationToken cancellationToken = default)
         {
             return await _context.RefreshTokens
                .Include(t => t.User)
-               .FirstOrDefaultAsync(t => t.Token == refresh);
+               .FirstOrDefaultAsync(t => t.Token == refreshToken, cancellationToken);
         }
-        public async Task AddRefreshToken(RefreshToken refreshToken)
+        public void AddRefreshToken(RefreshToken refreshToken)
         {
-            await _context.RefreshTokens.AddAsync(refreshToken);
+            _context.RefreshTokens.Add(refreshToken);
         }
 
-        public async Task SaveChangesAsync()
+        public async Task<bool> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            await _context.SaveChangesAsync();
+            return await _context.SaveChangesAsync(cancellationToken) > 0;
         }
     }
 }

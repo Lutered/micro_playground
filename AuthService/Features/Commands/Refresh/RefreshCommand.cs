@@ -4,7 +4,7 @@ using Shared.Models.Common;
 
 namespace AuthAPI.Features.Commands.Refresh
 {
-    public class RefreshCommand : IRequest<HandlerResult<AuthResponseDTO>>
+    public class RefreshCommand : IRequest<HandlerResult<AuthResponse>>
     {
         public string Token { get; private set; }
 

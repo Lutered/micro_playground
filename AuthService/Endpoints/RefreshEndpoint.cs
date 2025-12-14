@@ -1,24 +1,23 @@
-﻿using AuthAPI.Features.Commands.Login;
+﻿using AuthAPI.Features.Commands.Refresh;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Interfaces.Common;
-using Shared.Models.DTOs.Auth;
 
 namespace AuthAPI.Endpoints
 {
-    public class Login : IEndpoint
+    public class RefreshEndpoint : IEndpoint
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapPost("login",
+            app.MapPost("refresh",
                 async (
-                    [FromBody] LoginDTO loginDTO,
+                    [FromBody]string refreshToken,
                     IMediator mediator,
                     CancellationToken cancellationToken
                 ) =>
                 {
-                    var result = await mediator.Send(new LoginCommand(loginDTO), cancellationToken);
-
+                    var command = new RefreshCommand(refreshToken);
+                    var result = await mediator.Send(command, cancellationToken);
                     return (IResult)result.ToActionResult();
                 }
             );

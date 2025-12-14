@@ -1,17 +1,17 @@
 ﻿using Shared.Models.Responses.Auth;
 using MediatR;
 using Shared.Models.Common;
-using Shared.Models.DTOs.Auth;
+using Shared.Models.Requests.Auth;
 
 namespace AuthAPI.Features.Commands.Register
 {
-    public class RegisterCommand : IRequest<HandlerResult<AuthResponseDTO>>
+    public record class RegisterCommand : IRequest<HandlerResult<AuthResponse>>
     {
-        public RegisterDTO DTO { get; set; }
+        public RegisterRequest Input { get; init; }
 
-        public RegisterCommand(RegisterDTO dto) 
+        public RegisterCommand(RegisterRequest input) 
         {
-            DTO = dto; 
+            Input = input; 
         }
     }
 }

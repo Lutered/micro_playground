@@ -7,23 +7,25 @@ using Shared.Models.Common;
 
 namespace AuthAPI.Features.Commands.AddRole
 {
-    public class AddRoleHandler(
+    public class AddRoleCommandHandler(
         UserManager<AppUser> userManager,
         ILogger<LoginCommandHandler> logger
         )
-        : IRequestHandler<AddRoleCommand, HandlerResult<bool>>
+        : IRequestHandler<AddRoleCommand, HandlerResult>
     {
-        public async Task<HandlerResult<bool>> Handle(AddRoleCommand request, CancellationToken cancellationToken)
+        public async Task<HandlerResult> Handle(AddRoleCommand request, CancellationToken cancellationToken)
         {
+            var input = request.Input;
+
             var user = await userManager.Users
-              .FirstOrDefaultAsync(x => x.UserName == request.Username.ToLower());
+              .FirstOrDefaultAsync(x => x.UserName.ToLower() == input.Username.ToLower());
 
             if (user is null) 
-                return HandlerResult<bool>.Failure(HandlerErrorType.NotFound, "User was not found");
+                return HandlerResult.Failure(HandlerErrorType.NotFound, "User was not found");
 
             try
             {
-                await userManager.AddToRoleAsync(user, request.RoleName);
+                await userManager.AddToRoleAsync(user, input.RoleName);
             }
             catch(Exception ex)
             {
@@ -31,7 +33,7 @@ namespace AuthAPI.Features.Commands.AddRole
                 throw;
             }
 
-            return HandlerResult<bool>.Success(true);
+            return HandlerResult.Success();
         }
     }
 }

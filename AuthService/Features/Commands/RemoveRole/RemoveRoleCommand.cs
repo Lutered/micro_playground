@@ -1,17 +1,16 @@
 ﻿using MediatR;
 using Shared.Models.Common;
+using Shared.Models.Requests.Auth;
 
 namespace AuthAPI.Features.Commands.RemoveRole
 {
-    public class RemoveRoleCommand : IRequest<HandlerResult<bool>>
+    public record class RemoveRoleCommand : IRequest<HandlerResult>
     {
-        public string Username { get; private set; }
-        public string RoleName { get; private set; }
+        public RemoveRoleRequest Input { get; init; }
 
-        public RemoveRoleCommand(string username, string rolename)
+        public RemoveRoleCommand(RemoveRoleRequest input)
         {
-            Username = username;
-            RoleName = rolename;
+            Input = input;
         }
     }
 }

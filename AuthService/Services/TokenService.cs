@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace AuthAPI.Services
 {
@@ -67,7 +68,7 @@ namespace AuthAPI.Services
             return tokenHandler.WriteToken(token);
         }
 
-        public async Task<string> GenerateRefreshToken(AppUser user)
+        public async Task<string> GenerateRefreshToken(AppUser user, CancellationToken cancellationToken = default)
         {
             var configExpireDays = _authSettings.RefreshTokenExpireDays;
             var expireDay = !string.IsNullOrEmpty(configExpireDays) ? Int32.Parse(configExpireDays) : 7;
@@ -78,7 +79,8 @@ namespace AuthAPI.Services
                 Expires = DateTime.UtcNow.AddDays(expireDay)
             };
 
-            await _authRepo.AddRefreshToken(refreshToken);
+            _authRepo.AddRefreshToken(refreshToken);
+            await _authRepo.SaveChangesAsync();
 
             return refreshToken.Token;
         }

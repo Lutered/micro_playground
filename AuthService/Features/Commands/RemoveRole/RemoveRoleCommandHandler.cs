@@ -10,20 +10,21 @@ namespace AuthAPI.Features.Commands.RemoveRole
     public class RemoveRoleCommandHandler(
         UserManager<AppUser> userManager,
         ILogger<LoginCommandHandler> logger
-        )
-        : IRequestHandler<RemoveRoleCommand, HandlerResult<bool>>
+    ) : IRequestHandler<RemoveRoleCommand, HandlerResult>
     {
-        public async Task<HandlerResult<bool>> Handle(RemoveRoleCommand request, CancellationToken cancellationToken)
+        public async Task<HandlerResult> Handle(RemoveRoleCommand request, CancellationToken cancellationToken)
         {
+            var input = request.Input;
+
             var user = await userManager.Users
-              .FirstOrDefaultAsync(x => x.UserName == request.Username.ToLower());
+              .FirstOrDefaultAsync(x => x.UserName.ToLower() == input.Username.ToLower());
 
             if (user is null)
-                return HandlerResult<bool>.Failure(HandlerErrorType.NotFound, "User was not found");
+                return HandlerResult.Failure(HandlerErrorType.NotFound, $"User with username ${input.Username} was not found");
 
             try
             {
-                await userManager.RemoveFromRoleAsync(user, request.RoleName);
+                await userManager.RemoveFromRoleAsync(user, input.RoleName);
             }
             catch (Exception ex)
             {
@@ -31,7 +32,7 @@ namespace AuthAPI.Features.Commands.RemoveRole
                 throw;
             }
 
-            return HandlerResult<bool>.Success(true);
+            return HandlerResult.Success();
         }
     }
 }

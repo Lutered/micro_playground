@@ -1,27 +1,27 @@
-﻿using AuthAPI.Features.Commands.AddRole;
+﻿using AuthAPI.Features.Commands.Register;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Interfaces.Common;
+using Shared.Models.Requests.Auth;
 
 namespace AuthAPI.Endpoints
 {
-    public class AddRole : IEndpoint
+    public class RegisterEndpoint : IEndpoint
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapPost("addRole",
+            app.MapPost("register", 
                 async (
-                    [FromBody] Shared.Models.Contracts.User.PublishEvents.AddRole addRoleDTO,
+                    [FromBody]RegisterRequest request,
                     IMediator mediator,
                     CancellationToken cancellationToken
                 ) =>
                 {
-                    var result = await mediator.Send(new AddRoleCommand(addRoleDTO.Username, addRoleDTO.RoleName), cancellationToken);
-
+                    var command = new RegisterCommand(request);
+                    var result = await mediator.Send(command, cancellationToken);
                     return (IResult)result.ToActionResult();
-
                 }
-            ).RequireAuthorization(policy => policy.RequireRole("Admin"));
+            );
         }
     }
 }

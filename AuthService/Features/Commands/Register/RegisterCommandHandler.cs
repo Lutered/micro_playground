@@ -17,28 +17,30 @@ namespace AuthAPI.Features.Commands.Register
         ITokenService _tokenService,
         IPublishEndpoint _publishEndpoint,
         ILogger<RegisterCommandHandler> _logger
-     ) : IRequestHandler<RegisterCommand, HandlerResult<AuthResponseDTO>>
+     ) : IRequestHandler<RegisterCommand, HandlerResult<AuthResponse>>
     {
-        public async Task<HandlerResult<AuthResponseDTO>> Handle(RegisterCommand request, CancellationToken cancellationToken)
+        public async Task<HandlerResult<AuthResponse>> Handle(RegisterCommand request, CancellationToken cancellationToken = default)
         {
-            var registerDTO = request.DTO;
+            var input = request.Input;
 
-            if (await _userManager.UserExistsAsync(registerDTO.Username))
-                return HandlerResult<AuthResponseDTO>.Failure(HandlerErrorType.Conflict, $"User with username {registerDTO.Username} already exists");
+            if (await _userManager.UserExistsAsync(input.Username))
+                return HandlerResult<AuthResponse>.Failure(
+                    HandlerErrorType.Conflict, 
+                    $"User with username {input.Username} already exists");
 
-            var user = _mapper.Map<AppUser>(registerDTO);
+            var user = _mapper.Map<AppUser>(input);
 
-            var result = await _userManager.CreateAsync(user, registerDTO.Password);
+            var result = await _userManager.CreateAsync(user, input.Password);
 
             if (!result.Succeeded)
-                return HandlerResult<AuthResponseDTO>.Failure(
+                return HandlerResult<AuthResponse>.Failure(
                     HandlerErrorType.BadRequest, 
                     string.Join("; ", result.Errors.Select(e => e.Description)));
 
             var roleResult = await _userManager.AddToRoleAsync(user, "Member");
 
             if (!roleResult.Succeeded)
-                return HandlerResult<AuthResponseDTO>.Failure(
+                return HandlerResult<AuthResponse>.Failure(
                     HandlerErrorType.BadRequest, 
                     string.Join("; ", roleResult.Errors.Select(e => e.Description)));
 
@@ -52,7 +54,7 @@ namespace AuthAPI.Features.Commands.Register
                 Age = user.Age
             });
 
-            return HandlerResult<AuthResponseDTO>.Success(new AuthResponseDTO()
+            return HandlerResult<AuthResponse>.Success(new AuthResponse()
             {
                 Username = user.UserName,
                 Token = await _tokenService.GenerateAccessToken(user),

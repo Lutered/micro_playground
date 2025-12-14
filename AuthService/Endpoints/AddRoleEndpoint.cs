@@ -1,24 +1,26 @@
-﻿using AuthAPI.Features.Commands.RemoveRole;
+﻿using AuthAPI.Features.Commands.AddRole;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Interfaces.Common;
+using Shared.Models.Requests.Auth;
 
 namespace AuthAPI.Endpoints
 {
-    public class RemoveRole : IEndpoint
+    public class AddRoleEndpoint : IEndpoint
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapPost("removeRole",
+            app.MapPost("addRole",
                 async (
-                    [FromBody] Shared.Models.Contracts.User.PublishEvents.RemoveRole removeRoleDTO,
+                    [FromBody] AddRoleRequest request,
                     IMediator mediator,
                     CancellationToken cancellationToken
                 ) =>
                 {
-                    var result = await mediator.Send(new RemoveRoleCommand(removeRoleDTO.Username, removeRoleDTO.RoleName), cancellationToken);
-
+                    var command = new AddRoleCommand(request);
+                    var result = await mediator.Send(command, cancellationToken);
                     return (IResult)result.ToActionResult();
+
                 }
             ).RequireAuthorization(policy => policy.RequireRole("Admin"));
         }

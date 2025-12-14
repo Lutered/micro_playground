@@ -1,17 +1,16 @@
 ﻿using MediatR;
 using Shared.Models.Common;
+using Shared.Models.Requests.Auth;
 
 namespace AuthAPI.Features.Commands.AddRole
 {
-    public class AddRoleCommand : IRequest<HandlerResult<bool>>
+    public record class AddRoleCommand : IRequest<HandlerResult>
     {
-        public string Username { get; private set; }
-        public string RoleName { get; private set; }
+        public AddRoleRequest Input { get; init; }
 
-        public AddRoleCommand(string username, string rolename)
+        public AddRoleCommand(AddRoleRequest input)
         {
-            Username = username;
-            RoleName = rolename;
+            Input = Input;
         }
     }
 }
