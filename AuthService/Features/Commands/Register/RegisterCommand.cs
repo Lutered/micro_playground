@@ -1,6 +1,7 @@
-﻿using AuthAPI.Models;
+﻿using Shared.Models.Responses.Auth;
 using MediatR;
 using Shared.Models.Common;
+using Shared.Models.DTOs.Auth;
 
 namespace AuthAPI.Features.Commands.Register
 {

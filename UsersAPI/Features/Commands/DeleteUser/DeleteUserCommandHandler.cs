@@ -4,7 +4,7 @@ using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 using Shared.Models.Common;
-using Shared.Models.Contracts.Requests.User;
+using Shared.Models.Contracts.User.PublishEvents;
 using UsersAPI.Data.Entities;
 using UsersAPI.Extensions;
 using UsersAPI.Interfaces.Repositories;
@@ -15,7 +15,7 @@ namespace UsersAPI.Features.Commands.DeleteUser
         IUserRepository _userRepository,
         IPublishEndpoint _publishEndpoint,
         IDistributedCache _cache,
-        ILogger _logger
+        ILogger<DeleteUserCommandHandler> _logger
     )
     : IRequestHandler<DeleteUserCommand, HandlerResult<bool>>
     {

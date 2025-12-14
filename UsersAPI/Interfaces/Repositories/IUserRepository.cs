@@ -7,6 +7,7 @@ namespace UsersAPI.Interfaces.Repositories
     public interface IUserRepository
     {
         public Task<bool> UserExists(string username);
+        public Task<User> GetUserAsync(Guid userId, CancellationToken cancellationToken);
         public Task<User> GetUserAsync(string username, CancellationToken cancellationToken);
         public Task<PagedList<AppUserDTO>> GetUsersAsync(int page, int pageSize, CancellationToken cancellationToken);
 

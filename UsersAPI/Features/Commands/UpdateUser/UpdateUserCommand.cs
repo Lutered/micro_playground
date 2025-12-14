@@ -1,16 +1,16 @@
 ﻿using MediatR;
 using Shared.Models.Common;
-using UsersAPI.DTOs;
+using Shared.Models.Requests.User;
 
 namespace UsersAPI.Features.Commands.UpdateUser
 {
-    public class UpdateUserCommand : IRequest<HandlerResult<bool>>
+    public class UpdateUserCommand : IRequest<HandlerResult>
     {
-        public AppUserDTO DTO { get; set; }
+        public UpdateUserRequest Input { get; set; }
 
-        public UpdateUserCommand(AppUserDTO dto)
+        public UpdateUserCommand(UpdateUserRequest input)
         {
-            DTO = dto;
+            Input = input;
         }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using AuthAPI.Data;
 using AuthAPI.Data.Entities;
-using AuthAPI.Models;
+using Shared.Models.Responses.Auth;
 using AuthAPI.Features.Commands.Login;
-using AuthAPI.Intrefaces;
 using MediatR;
 using Shared.Models.Common;
+using AuthAPI.Data.Repositories.Interfaces;
+using AuthAPI.Services.Interfaces;
 
 namespace AuthAPI.Features.Commands.Refresh
 {
@@ -38,7 +39,7 @@ namespace AuthAPI.Features.Commands.Refresh
 
             _logger.LogInformation($"Refresh token for user {user.UserName} was updated successfuly");
 
-            return HandlerResult< AuthResponseDTO >.Success(new AuthResponseDTO
+            return HandlerResult<AuthResponseDTO>.Success(new AuthResponseDTO
             {
                 Username = user.UserName,
                 Token = newAccessToken,

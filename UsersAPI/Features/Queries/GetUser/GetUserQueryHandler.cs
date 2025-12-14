@@ -5,6 +5,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Shared.Models.Common;
 using UsersAPI.DTOs;
 using UsersAPI.Extensions;
+using UsersAPI.Helpers;
 using UsersAPI.Interfaces.Repositories;
 
 namespace UsersAPI.Features.Queries.GetUser
@@ -18,22 +19,29 @@ namespace UsersAPI.Features.Queries.GetUser
     {
         public async Task<HandlerResult<AppUserDTO>> Handle(GetUserQuery request, CancellationToken cancellationToken)
         {
+            Guid? id = request.Id;
             string username = request.Username;
 
-            //string cacheKey = $"{CONSTS.USER_PREFIX}:user:{username}";
-            //var cachedUser = await _cache.GetAsync<AppUserDTO>(cacheKey);
+            string cacheKey = id != null ? 
+                $"{CACHEKEYS.USER_KEY}:user_id:{id.ToString()}" :
+                $"{CACHEKEYS.USER_KEY}:user_name:{username}";
 
-            //if (cachedUser is not null) 
-            //    return HandlerResult<AppUserDTO>.Success(cachedUser);
+            var cachedUser = await _cache.GetAsync<AppUserDTO>(cacheKey);
 
-            var user = await _userRepository.GetUserAsync(username, cancellationToken);
+            if (cachedUser is not null)
+                return HandlerResult<AppUserDTO>.Success(cachedUser);
+
+            var user = id != null ?
+                await _userRepository.GetUserAsync((Guid)id, cancellationToken) :
+                await _userRepository.GetUserAsync(username, cancellationToken);
 
             if (user is null)
                 return HandlerResult<AppUserDTO>.Failure(HandlerErrorType.NotFound, "User was not found");
 
             var mappedUser = _mapper.Map<AppUserDTO>(user);
 
-            //await _cache.CreateAsync(cacheKey, mappedUser);
+            await _cache.CreateAsync($"{CACHEKEYS.USER_KEY}:user_id:{user.Id.ToString()}", mappedUser);
+            await _cache.CreateAsync($"{CACHEKEYS.USER_KEY}:user_name:{user.Username.ToString()}", mappedUser);
 
             return HandlerResult<AppUserDTO>.Success(mappedUser);
         }

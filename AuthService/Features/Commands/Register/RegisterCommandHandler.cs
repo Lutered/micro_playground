@@ -1,13 +1,13 @@
 ﻿using AuthAPI.Data.Entities;
-using AuthAPI.Models;
+using Shared.Models.Responses.Auth;
 using AuthAPI.Extensions;
-using AuthAPI.Intrefaces;
 using AutoMapper;
 using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Shared.Models.Common;
-using Shared.Models.Contracts.Requests.User;
+using AuthAPI.Services.Interfaces;
+using Shared.Models.Contracts.User.PublishEvents;
 
 namespace AuthAPI.Features.Commands.Register
 {
@@ -46,6 +46,7 @@ namespace AuthAPI.Features.Commands.Register
 
             await _publishEndpoint.Publish(new UserCreated
             {
+                Id = user.Id,
                 Username = user.UserName,
                 Email = user.Email,
                 Age = user.Age

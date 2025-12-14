@@ -10,6 +10,7 @@ var postgres = builder
 
 var authDb = postgres.AddDatabase("authdb");
 var usersDb = postgres.AddDatabase("usersdb");
+var coursesDb = postgres.AddDatabase("coursesdb");
 
 var rabbitMq = builder
                     .AddRabbitMQ("rabbitmqm")
@@ -53,8 +54,10 @@ builder.AddProject<Projects.UsersAPI>("usersapi")
     .WithReference(redis)
     .WithReference(elasticSearch);
 
-builder.AddProject<Projects.Gateway>("gateway");
+builder.AddProject<Projects.CoursesApi>("coursesapi")
+     .WithReference(coursesDb)
+     .WithReference(rabbitMq);
 
-builder.AddProject<Projects.CoursesApi>("coursesapi");
+builder.AddProject<Projects.Gateway>("gateway");
 
 builder.Build().Run();

@@ -12,7 +12,7 @@ namespace UsersAPI.Features.Commands.CreateUser
         IUserRepository _userRepository,
         IMapper _mapper,
         IDistributedCache _cache,
-        ILogger _logger
+        ILogger<CreateUserCommandHandler> _logger
     )
     : IRequestHandler<CreateUserCommand, HandlerResult<bool>>
     {

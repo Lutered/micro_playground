@@ -1,4 +1,11 @@
-﻿namespace CoursesApi.Extensions
+﻿using CoursesApi.Data;
+using CoursesApi.Data.Repositories;
+using CoursesApi.Data.Repositories.Interfaces;
+using MassTransit;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+
+namespace CoursesApi.Extensions
 {
     public static class ApplicationServiceExtension
     {
@@ -8,24 +15,33 @@
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
-            //services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            //services.AddDbContext<AppDbContext>(opt =>
-            //{
-            //    opt.UseNpgsql(config.GetConnectionString("usersdb"));
-            //});
+            services.AddDbContext<CourseContext>(opt =>
+            {
+                opt.UseNpgsql(config.GetConnectionString("coursesdb"));
+            });
 
-            //services.AddMassTransit(c =>
-            //{
-            //    c.AddConsumer<UserCreatedConsumer>();
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+            });
 
-            //    c.UsingRabbitMq((ctx, cfg) =>
-            //    {
-            //        cfg.Host(new Uri(config.GetConnectionString("rabbitmqm")));
+            services.AddScoped<ICourseRepository, CourseRepository>();
+            services.AddScoped<IParticipantsRepository, ParticipiantsRepository>();
 
-            //        cfg.ConfigureEndpoints(ctx);
-            //    });
-            //});
+
+            services.AddMassTransit(c =>
+            {
+                //c.AddConsumer<UserCreatedConsumer>();
+
+                c.UsingRabbitMq((ctx, cfg) =>
+                {
+                    cfg.Host(new Uri(config.GetConnectionString("rabbitmqm")));
+
+                    cfg.ConfigureEndpoints(ctx);
+                });
+            });
 
             //services.AddStackExchangeRedisCache(options => {
             //    options.Configuration = config.GetConnectionString("redis");

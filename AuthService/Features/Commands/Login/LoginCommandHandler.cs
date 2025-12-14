@@ -1,10 +1,10 @@
 ﻿using AuthAPI.Data.Entities;
-using AuthAPI.Models;
-using AuthAPI.Intrefaces;
+using Shared.Models.Responses.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Shared.Models.Common;
+using AuthAPI.Services.Interfaces;
 
 namespace AuthAPI.Features.Commands.Login
 {
@@ -22,12 +22,14 @@ namespace AuthAPI.Features.Commands.Login
               .FirstOrDefaultAsync(x => x.UserName == loginDTO.Username);
 
             if (user == null) 
-                return HandlerResult<AuthResponseDTO>.Failure(HandlerErrorType.NotFound, "Invalid username");
+                return HandlerResult<AuthResponseDTO>
+                    .Failure(HandlerErrorType.NotFound, "Invalid username");
 
             var result = await userManager.CheckPasswordAsync(user, loginDTO.Password);
 
             if (!result)
-                return HandlerResult<AuthResponseDTO>.Failure(HandlerErrorType.NotFound, "Invalid username");
+                return HandlerResult<AuthResponseDTO>
+                    .Failure(HandlerErrorType.NotFound, "Invalid username");
 
             logger.LogInformation($"User {user.UserName} was login successfuly");
 

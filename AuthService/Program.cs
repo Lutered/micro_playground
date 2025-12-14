@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Reflection;
 using Shared.Extensions;
 using Shared.Middlewares;
+using AuthAPI.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
@@ -13,6 +14,8 @@ builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices((builder.Configuration));
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 builder.Services.AddLogs(builder.Configuration, builder.Host);
+
+builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection("Authorization"));
 
 var app = builder.Build();
 

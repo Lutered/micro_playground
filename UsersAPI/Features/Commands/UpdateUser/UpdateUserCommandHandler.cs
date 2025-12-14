@@ -12,22 +12,20 @@ namespace UsersAPI.Features.Commands.UpdateUser
         IUserRepository _userRepository,
         IMapper _mapper,
         IDistributedCache _cache,
-        ILogger _logger
+        ILogger<UpdateUserCommandHandler> _logger
     )
-    : IRequestHandler<UpdateUserCommand, HandlerResult<bool>>
+    : IRequestHandler<UpdateUserCommand, HandlerResult>
     {
-        public async Task<HandlerResult<bool>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+        public async Task<HandlerResult> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            var dto = request.DTO;
+            var input = request.Input;
 
-            var user = await _userRepository.GetUserAsync(dto.UserName, cancellationToken);
+            var user = await _userRepository.GetUserAsync(input.UserName, cancellationToken);
 
             if (user is null)
-                return HandlerResult<bool>.Failure(
+                return HandlerResult.Failure(
                     HandlerErrorType.NotFound, 
-                    $"User {dto.UserName} does not exists");
-
-            _mapper.Map(dto, user);
+                    $"User {input.UserName} does not exists");
 
             await _userRepository.SaveChangesAsync(cancellationToken);
 
@@ -36,7 +34,7 @@ namespace UsersAPI.Features.Commands.UpdateUser
 
             _logger.LogInformation($"User {user.Username} was updated");
 
-            return HandlerResult<bool>.Success(true);
+            return HandlerResult.Success();
         }
     }
 }

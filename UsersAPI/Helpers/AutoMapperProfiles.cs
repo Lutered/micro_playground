@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using Shared.Models.Contracts.Requests.User;
+using Shared.Models.Contracts.User.PublishEvents;
+using Shared.Models.Requests.User;
 using UsersAPI.Data.Entities;
 using UsersAPI.DTOs;
 

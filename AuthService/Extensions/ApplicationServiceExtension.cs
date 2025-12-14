@@ -1,5 +1,4 @@
 ﻿using AuthAPI.Data;
-using AuthAPI.Intrefaces;
 using AuthAPI.Sagas;
 using AuthAPI.Sagas.Instances;
 using AuthAPI.Services;
@@ -11,6 +10,8 @@ using Microsoft.AspNetCore.Identity;
 using AuthAPI.Consumers;
 using System.Reflection;
 using AuthAPI.Data.Repositories;
+using AuthAPI.Data.Repositories.Interfaces;
+using AuthAPI.Services.Interfaces;
 
 namespace AuthAPI.Extensions
 {
@@ -26,7 +27,7 @@ namespace AuthAPI.Extensions
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
-            services.AddDbContext<AppDbContext>(opt =>
+            services.AddDbContext<AuthContext>(opt =>
             {
                 opt.UseNpgsql(config.GetConnectionString("authdb"));   
             });

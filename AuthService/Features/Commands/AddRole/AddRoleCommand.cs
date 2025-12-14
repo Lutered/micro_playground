@@ -5,8 +5,8 @@ namespace AuthAPI.Features.Commands.AddRole
 {
     public class AddRoleCommand : IRequest<HandlerResult<bool>>
     {
-        public string Username { get; set; }
-        public string RoleName { get; set; }
+        public string Username { get; private set; }
+        public string RoleName { get; private set; }
 
         public AddRoleCommand(string username, string rolename)
         {

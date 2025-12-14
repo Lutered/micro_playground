@@ -6,11 +6,17 @@ namespace UsersAPI.Features.Queries.GetUser
 {
     public class GetUserQuery : IRequest<HandlerResult<AppUserDTO>>
     {
-        public string Username { get; set; }
+        public Guid? Id { get; } = null;
+        public string Username { get; } = string.Empty;
 
         public GetUserQuery(string username)
         {
             Username = username;
+        }
+
+        public GetUserQuery(Guid id)
+        {
+            Id = id;
         }
     }
 }

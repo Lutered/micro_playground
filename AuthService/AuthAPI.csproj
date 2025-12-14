@@ -41,6 +41,7 @@
   <ItemGroup>
     <Folder Include="Features\Queries\" />
     <Folder Include="Middlewares\" />
+    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>

@@ -1,8 +1,8 @@
 ﻿using AuthAPI.Features.Commands.Login;
-using AuthAPI.Intrefaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Interfaces.Common;
+using Shared.Models.DTOs.Auth;
 
 namespace AuthAPI.Endpoints
 {

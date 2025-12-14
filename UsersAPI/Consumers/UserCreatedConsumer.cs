@@ -1,6 +1,6 @@
 ﻿using MassTransit;
 using MediatR;
-using Shared.Models.Contracts.Requests.User;
+using Shared.Models.Contracts.User.PublishEvents;
 using UsersAPI.DTOs;
 using UsersAPI.Features.Commands.CreateUser;
 
@@ -17,6 +17,7 @@ namespace UsersAPI.Consumers
             await _mediator.Send(new CreateUserCommand(
                 new AppUserDTO() 
                 { 
+                    Id = contract.Id,
                     UserName = contract.Username,
                     Email = contract.Email,
                     Age = contract.Age

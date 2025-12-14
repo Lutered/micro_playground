@@ -1,7 +1,7 @@
 ﻿using AuthAPI.Features.Commands.AddRole;
 using MassTransit;
 using MediatR;
-using Shared.Models.Contracts.Requests.User;
+using Shared.Models.Contracts.User.PublishEvents;
 
 namespace AuthAPI.Consumers
 {

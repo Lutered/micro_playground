@@ -7,6 +7,7 @@ using UsersAPI.Data;
 using UsersAPI.Interfaces;
 using UsersAPI.Interfaces.Repositories;
 using System.Reflection;
+using UsersAPI.Data.Repositories;
 
 namespace UsersAPI.Extensions
 {
@@ -20,7 +21,7 @@ namespace UsersAPI.Extensions
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            services.AddDbContext<AppDbContext>(opt =>
+            services.AddDbContext<UserContext>(opt =>
             {
                 opt.UseNpgsql(config.GetConnectionString("usersdb"));
             });

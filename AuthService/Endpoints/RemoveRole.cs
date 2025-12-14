@@ -1,5 +1,4 @@
 ﻿using AuthAPI.Features.Commands.RemoveRole;
-using AuthAPI.Intrefaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Interfaces.Common;
@@ -12,7 +11,7 @@ namespace AuthAPI.Endpoints
         {
             app.MapPost("removeRole",
                 async (
-                    [FromBody] Shared.Models.Contracts.Requests.User.RemoveRole removeRoleDTO,
+                    [FromBody] Shared.Models.Contracts.User.PublishEvents.RemoveRole removeRoleDTO,
                     IMediator mediator,
                     CancellationToken cancellationToken
                 ) =>

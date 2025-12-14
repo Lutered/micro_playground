@@ -1,10 +1,10 @@
 ﻿using AuthAPI.Data.Entities;
-using AuthAPI.Intrefaces;
+using AuthAPI.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace AuthAPI.Data.Repositories
 {
-    public class AuthRepository(AppDbContext _context) : IAuthRepository
+    public class AuthRepository(AuthContext _context) : IAuthRepository
     {
         public async Task<RefreshToken> GetRefereshToken(string refresh)
         {
@@ -15,7 +15,6 @@ namespace AuthAPI.Data.Repositories
         public async Task AddRefreshToken(RefreshToken refreshToken)
         {
             await _context.RefreshTokens.AddAsync(refreshToken);
-            
         }
 
         public async Task SaveChangesAsync()

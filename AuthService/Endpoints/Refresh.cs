@@ -1,5 +1,4 @@
 ﻿using AuthAPI.Features.Commands.Refresh;
-using AuthAPI.Intrefaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Interfaces.Common;

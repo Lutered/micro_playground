@@ -14,7 +14,7 @@ namespace AuthAPI.Extensions
             services.AddIdentityCore<AppUser>(opt => { })
                .AddRoles<AppRole>()
                .AddRoleManager<RoleManager<AppRole>>()
-               .AddEntityFrameworkStores<AppDbContext>();
+               .AddEntityFrameworkStores<AuthContext>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

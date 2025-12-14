@@ -1,5 +1,4 @@
 ﻿using AuthAPI.Features.Commands.AddRole;
-using AuthAPI.Intrefaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Interfaces.Common;
@@ -12,7 +11,7 @@ namespace AuthAPI.Endpoints
         {
             app.MapPost("addRole",
                 async (
-                    [FromBody] Shared.Models.Contracts.Requests.User.AddRole addRoleDTO,
+                    [FromBody] Shared.Models.Contracts.User.PublishEvents.AddRole addRoleDTO,
                     IMediator mediator,
                     CancellationToken cancellationToken
                 ) =>

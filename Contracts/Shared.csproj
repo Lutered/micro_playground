@@ -11,7 +11,6 @@
 	<Content Include="Static\public.key">
 		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</Content>
-	<Folder Include="Models\DTOs\" />
   </ItemGroup>
 
 </Project>

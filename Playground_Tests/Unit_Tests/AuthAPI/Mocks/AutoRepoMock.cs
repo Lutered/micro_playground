@@ -1,5 +1,5 @@
 ﻿using AuthAPI.Data.Entities;
-using AuthAPI.Intrefaces;
+using AuthAPI.Data.Repositories.Interfaces;
 using Moq;
 
 namespace Playground_Tests.Unit_Tests.AuthAPI.Mocks
