@@ -2,9 +2,9 @@
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 using Shared.Models.Common;
+using UsersAPI.Data.Repositories.Interfaces;
 using UsersAPI.DTOs;
 using UsersAPI.Extensions;
-using UsersAPI.Interfaces.Repositories;
 
 namespace UsersAPI.Features.Commands.UpdateUser
 {
@@ -18,14 +18,15 @@ namespace UsersAPI.Features.Commands.UpdateUser
     {
         public async Task<HandlerResult> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
+            var id = request.Id;
             var input = request.Input;
 
-            var user = await _userRepository.GetUserAsync(input.UserName, cancellationToken);
+            var user = await _userRepository.GetEntityAsync(id, cancellationToken);
 
             if (user is null)
                 return HandlerResult.Failure(
                     HandlerErrorType.NotFound, 
-                    $"User {input.UserName} does not exists");
+                    $"User with Id {id} does not exists");
 
             await _userRepository.SaveChangesAsync(cancellationToken);
 

@@ -8,11 +8,11 @@ namespace CoursesApi.Features.Queries.GetCourses
     public class GetCoursesQueryHandler(ICourseRepository _courseRepo) 
         : IRequestHandler<GetCoursesQuery, HandlerResult<PagedList<CourseDTO>>>
     {
-        public async Task<HandlerResult<PagedList<CourseDTO>>> Handle(GetCoursesQuery request, CancellationToken cancellationToken)
+        public async Task<HandlerResult<PagedList<CourseDTO>>> Handle(GetCoursesQuery request, CancellationToken cancellationToken = default)
         {
             var input = request.Input;
 
-            var courses = await _courseRepo.GetAllCoursesAsync(input.Page, input.PageSize, input.Sort);
+            var courses = await _courseRepo.GetAllCoursesAsync(input, cancellationToken);
 
             return HandlerResult<PagedList<CourseDTO>>.Success(courses);
         }

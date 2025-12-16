@@ -3,13 +3,13 @@ using Shared.Models.Common;
 
 namespace UsersAPI.Features.Commands.DeleteUser
 {
-    public class DeleteUserCommand : IRequest<HandlerResult<bool>>
+    public class DeleteUserCommand : IRequest<HandlerResult>
     {
-        public string Username { get; set; }
+        public Guid Id { get; set; }
 
-        public DeleteUserCommand(string username)
+        public DeleteUserCommand(Guid id)
         {
-            Username = username;
+            Id = id;
         }
     }
 }

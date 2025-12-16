@@ -40,7 +40,7 @@ namespace CoursesApi.Features.Commands.CreateCourse
                     participant = new Participant() 
                     {
                         UserId = user.Id,
-                        FirstName = user.UserName,
+                        FirstName = user.Username,
                     };
 
                     _participantsRepo.AddEntity(participant);

@@ -3,10 +3,11 @@ using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 using Shared.Models.Common;
+using Shared.Models.DTOs.User;
+using UsersAPI.Data.Repositories.Interfaces;
 using UsersAPI.DTOs;
 using UsersAPI.Extensions;
 using UsersAPI.Helpers;
-using UsersAPI.Interfaces.Repositories;
 
 namespace UsersAPI.Features.Queries.GetUser
 {
@@ -15,9 +16,9 @@ namespace UsersAPI.Features.Queries.GetUser
             IMapper _mapper,
             IDistributedCache _cache
         ) 
-        : IRequestHandler<GetUserQuery, HandlerResult<AppUserDTO>>
+        : IRequestHandler<GetUserQuery, HandlerResult<UserDTO>>
     {
-        public async Task<HandlerResult<AppUserDTO>> Handle(GetUserQuery request, CancellationToken cancellationToken)
+        public async Task<HandlerResult<UserDTO>> Handle(GetUserQuery request, CancellationToken cancellationToken)
         {
             Guid? id = request.Id;
             string username = request.Username;
@@ -26,24 +27,22 @@ namespace UsersAPI.Features.Queries.GetUser
                 $"{CACHEKEYS.USER_KEY}:user_id:{id.ToString()}" :
                 $"{CACHEKEYS.USER_KEY}:user_name:{username}";
 
-            var cachedUser = await _cache.GetAsync<AppUserDTO>(cacheKey);
+            var cachedUser = await _cache.GetAsync<UserDTO>(cacheKey);
 
             if (cachedUser is not null)
-                return HandlerResult<AppUserDTO>.Success(cachedUser);
+                return HandlerResult<UserDTO>.Success(cachedUser);
 
             var user = id != null ?
                 await _userRepository.GetUserAsync((Guid)id, cancellationToken) :
                 await _userRepository.GetUserAsync(username, cancellationToken);
 
             if (user is null)
-                return HandlerResult<AppUserDTO>.Failure(HandlerErrorType.NotFound, "User was not found");
+                return HandlerResult<UserDTO>.Failure(HandlerErrorType.NotFound, "User was not found");
 
-            var mappedUser = _mapper.Map<AppUserDTO>(user);
+            await _cache.CreateAsync($"{CACHEKEYS.USER_KEY}:user_id:{user.Id.ToString()}", user);
+            await _cache.CreateAsync($"{CACHEKEYS.USER_KEY}:user_name:{user.Username.ToString()}", user);
 
-            await _cache.CreateAsync($"{CACHEKEYS.USER_KEY}:user_id:{user.Id.ToString()}", mappedUser);
-            await _cache.CreateAsync($"{CACHEKEYS.USER_KEY}:user_name:{user.Username.ToString()}", mappedUser);
-
-            return HandlerResult<AppUserDTO>.Success(mappedUser);
+            return HandlerResult<UserDTO>.Success(user);
         }
     }
 }

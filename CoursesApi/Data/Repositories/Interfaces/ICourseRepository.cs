@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Shared.Models.Common;
 using Shared.Models.DTOs.Course;
+using Shared.Models.Requests.Course;
 using System.Threading;
 
 namespace CoursesApi.Data.Repositories.Interfaces
@@ -9,9 +10,7 @@ namespace CoursesApi.Data.Repositories.Interfaces
     public interface ICourseRepository
     {
         public Task<PagedList<CourseDTO>> GetAllCoursesAsync(
-            int page,
-            int pageSize,
-            string sort,
+            GetCoursesRequest request,
             CancellationToken cancellationToken = default
         );
 

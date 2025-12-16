@@ -6,10 +6,12 @@ namespace UsersAPI.Features.Commands.UpdateUser
 {
     public class UpdateUserCommand : IRequest<HandlerResult>
     {
+        public Guid Id { get; set; }
         public UpdateUserRequest Input { get; set; }
 
-        public UpdateUserCommand(UpdateUserRequest input)
+        public UpdateUserCommand(Guid id, UpdateUserRequest input)
         {
+            Id = id;
             Input = input;
         }
     }

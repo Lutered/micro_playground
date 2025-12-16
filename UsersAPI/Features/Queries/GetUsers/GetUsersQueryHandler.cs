@@ -2,8 +2,9 @@
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 using Shared.Models.Common;
+using Shared.Models.DTOs.User;
+using UsersAPI.Data.Repositories.Interfaces;
 using UsersAPI.DTOs;
-using UsersAPI.Interfaces.Repositories;
 
 namespace UsersAPI.Features.Queries.GetUsers
 {
@@ -11,11 +12,11 @@ namespace UsersAPI.Features.Queries.GetUsers
             IUserRepository _userRepository,
             IDistributedCache _cache
         )
-        : IRequestHandler<GetUsersQuery, HandlerResult<PagedList<AppUserDTO>>>
+        : IRequestHandler<GetUsersQuery, HandlerResult<PagedList<UserDTO>>>
     {
-        public async Task<HandlerResult<PagedList<AppUserDTO>>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
+        public async Task<HandlerResult<PagedList<UserDTO>>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
         {
-            var pageParams = request.PageParams;
+            var input = request.Input;
 
             //var version = await _cache.GetVersionAsync($"{CONSTS.USER_PREFIX}:users");
 
@@ -25,11 +26,11 @@ namespace UsersAPI.Features.Queries.GetUsers
             //if (cachedUsers is not null)
             //    return HandlerResult<PagedList<AppUserDTO>>.Success(cachedUsers);
 
-            var users = await _userRepository.GetUsersAsync(pageParams.Page, pageParams.PageSize, cancellationToken);
+            var users = await _userRepository.GetUsersAsync(input, cancellationToken);
 
             //await _cache.CreateAsync(cacheKey, users);
 
-            return HandlerResult<PagedList<AppUserDTO>>.Success(users);
+            return HandlerResult<PagedList<UserDTO>>.Success(users);
         }
     }
 }

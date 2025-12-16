@@ -1,13 +1,15 @@
-﻿using MassTransit;
+﻿using AutoMapper;
+using MassTransit;
 using MediatR;
 using Shared.Models.Contracts.User.PublishEvents;
-using UsersAPI.DTOs;
+using Shared.Models.DTOs.User;
 using UsersAPI.Features.Commands.CreateUser;
 
 namespace UsersAPI.Consumers
 {
     public class UserCreatedConsumer(
-        IMediator _mediator)
+        IMediator _mediator,
+        IMapper _mapper)
       : IConsumer<UserCreated>
     {
         public async Task Consume(ConsumeContext<UserCreated> context)
@@ -15,13 +17,7 @@ namespace UsersAPI.Consumers
             var contract = context.Message;
 
             await _mediator.Send(new CreateUserCommand(
-                new AppUserDTO() 
-                { 
-                    Id = contract.Id,
-                    UserName = contract.Username,
-                    Email = contract.Email,
-                    Age = contract.Age
-                }
+                _mapper.Map<UserDTO>(contract)
             ));
         }
     }

@@ -1,17 +1,16 @@
 ﻿using MediatR;
 using Shared.Models.Common;
-using Shared.Models.Requests;
-using UsersAPI.DTOs;
-using UsersAPI.Helpers;
+using Shared.Models.DTOs.User;
+using Shared.Models.Requests.User;
 
 namespace UsersAPI.Features.Queries.GetUsers
 {
-    public class GetUsersQuery : IRequest<HandlerResult<PagedList<AppUserDTO>>>
+    public class GetUsersQuery : IRequest<HandlerResult<PagedList<UserDTO>>>
     {
-        public PagedRequest PageParams { get; set; }
-        public GetUsersQuery(PagedRequest pageParams) 
+        public GetUsersRequest Input { get; set; }
+        public GetUsersQuery(GetUsersRequest input) 
         {
-            PageParams = pageParams; 
+            Input = input; 
         }
     }
 }

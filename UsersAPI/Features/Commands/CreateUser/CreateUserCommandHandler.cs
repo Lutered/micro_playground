@@ -3,8 +3,8 @@ using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 using Shared.Models.Common;
 using UsersAPI.Data.Entities;
+using UsersAPI.Data.Repositories.Interfaces;
 using UsersAPI.Extensions;
-using UsersAPI.Interfaces.Repositories;
 
 namespace UsersAPI.Features.Commands.CreateUser
 {
@@ -14,18 +14,18 @@ namespace UsersAPI.Features.Commands.CreateUser
         IDistributedCache _cache,
         ILogger<CreateUserCommandHandler> _logger
     )
-    : IRequestHandler<CreateUserCommand, HandlerResult<bool>>
+    : IRequestHandler<CreateUserCommand, HandlerResult<Guid>>
     {
-        public async Task<HandlerResult<bool>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        public async Task<HandlerResult<Guid>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var dto = request.DTO;
+            var input = request.Input;
 
-            if (await _userRepository.UserExists(dto.UserName))
-                return HandlerResult<bool>.Failure(
+            if (await _userRepository.IsUserExists(input.Username))
+                return HandlerResult<Guid>.Failure(
                     HandlerErrorType.Conflict,
-                    $"User {dto.UserName} already exists");
+                    $"User {input.Username} already exists");
 
-            var user = _mapper.Map<User>(dto);
+            var user = _mapper.Map<User>(input);
 
             _userRepository.AddUser(user);
             await _userRepository.SaveChangesAsync(cancellationToken);
@@ -34,7 +34,7 @@ namespace UsersAPI.Features.Commands.CreateUser
 
             _logger.LogInformation($"User {user.Username} was created");
 
-            return HandlerResult<bool>.Success(true);
+            return HandlerResult<Guid>.Success(user.Id);
         }
     }
 }

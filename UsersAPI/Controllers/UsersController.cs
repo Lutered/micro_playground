@@ -1,13 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using UsersAPI.DTOs;
 using UsersAPI.Features.Queries.GetUsers;
 using UsersAPI.Features.Queries.GetUser;
 using UsersAPI.Features.Commands.UpdateUser;
 using UsersAPI.Features.Commands.DeleteUser;
 using System.IdentityModel.Tokens.Jwt;
-using Shared.Models.Requests;
 using Shared.Models.Requests.User;
 
 namespace UsersAPI.Controllers
@@ -21,7 +19,7 @@ namespace UsersAPI.Controllers
         ) : ControllerBase
     {
         [HttpGet("profile")]
-        public async Task<IActionResult> GetProfile(CancellationToken cancellationToken) 
+        public async Task<IActionResult> GetProfile(CancellationToken cancellationToken = default) 
         {
             string userIdStr = User.FindFirst(JwtRegisteredClaimNames.NameId)?.Value;
 
@@ -35,8 +33,8 @@ namespace UsersAPI.Controllers
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUsers(
-           [FromQuery] PagedRequest pageParams,
-           CancellationToken cancellationToken)
+           [FromQuery] GetUsersRequest pageParams,
+           CancellationToken cancellationToken = default)
         {
             var query = new GetUsersQuery(pageParams);
             var result = await mediator.Send(query, cancellationToken);
@@ -61,18 +59,18 @@ namespace UsersAPI.Controllers
             UpdateUserRequest updateRequest, 
             CancellationToken cancellationToken = default)
         {
-            var command = new UpdateUserCommand(updateRequest);
+            var command = new UpdateUserCommand(id, updateRequest);
             var result = await mediator.Send(command, cancellationToken);
             return result.ToActionResult();
         }
 
-        [HttpDelete("{username}")]
+        [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(
-            string username, 
+            Guid id, 
             CancellationToken cancellationToken)
         {
-            var result = await mediator.Send(new DeleteUserCommand(username), cancellationToken);
+            var result = await mediator.Send(new DeleteUserCommand(id), cancellationToken);
 
             return result.ToActionResult();
         }

@@ -4,10 +4,9 @@ using Serilog.Sinks.Elasticsearch;
 using Serilog;
 using UsersAPI.Consumers;
 using UsersAPI.Data;
-using UsersAPI.Interfaces;
-using UsersAPI.Interfaces.Repositories;
 using System.Reflection;
 using UsersAPI.Data.Repositories;
+using UsersAPI.Data.Repositories.Interfaces;
 
 namespace UsersAPI.Extensions
 {

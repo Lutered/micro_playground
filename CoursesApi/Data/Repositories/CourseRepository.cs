@@ -2,9 +2,11 @@
 using AutoMapper.QueryableExtensions;
 using CoursesApi.Data.Entities;
 using CoursesApi.Data.Repositories.Interfaces;
+using Elasticsearch.Net;
 using Shared.Extensions;
 using Shared.Models.Common;
 using Shared.Models.DTOs.Course;
+using Shared.Models.Requests.Course;
 using System.Linq.Expressions;
 
 namespace CoursesApi.Data.Repositories
@@ -19,16 +21,17 @@ namespace CoursesApi.Data.Repositories
         };
 
         public async Task<PagedList<CourseDTO>> GetAllCoursesAsync(
-            int page,
-            int pageSize,
-            string sort = "",
+             GetCoursesRequest request,
              CancellationToken cancellationToken = default
          ) 
         {
-            return await _context.Courses
-                            .ProjectTo<CourseDTO>(_mapper.ConfigurationProvider)
-                            .ApplySort(sort, sortMap)
-                            .ToPagedListAsync(page, pageSize);
+            var query = _context.Courses
+                            .ProjectTo<CourseDTO>(_mapper.ConfigurationProvider);
+
+            if (!string.IsNullOrWhiteSpace(request.Sort)) 
+                query = query.ApplySort(request.Sort, sortMap);
+
+            return await query.ToPagedListAsync(request.Page, request.PageSize);
         }
 
         public async Task<CourseDTO?> GetCourseAsync(Guid id, CancellationToken cancellationToken = default)

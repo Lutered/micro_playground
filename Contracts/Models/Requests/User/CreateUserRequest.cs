@@ -1,6 +1,6 @@
-﻿namespace Shared.Models.DTOs.User
+﻿namespace Shared.Models.Requests.User
 {
-    public class UserDTO
+    public class CreateUserRequest
     {
         public Guid Id { get; set; }
         public string Username { get; set; }

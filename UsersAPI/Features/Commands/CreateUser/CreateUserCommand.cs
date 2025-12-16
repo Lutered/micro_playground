@@ -1,16 +1,17 @@
 ﻿using MediatR;
 using Shared.Models.Common;
+using Shared.Models.DTOs.User;
 using UsersAPI.DTOs;
 
 namespace UsersAPI.Features.Commands.CreateUser
 {
-    public class CreateUserCommand : IRequest<HandlerResult<bool>>
+    public class CreateUserCommand : IRequest<HandlerResult<Guid>>
     {
-        public AppUserDTO DTO { get; set; }
+        public UserDTO Input { get; set; }
 
-        public CreateUserCommand(AppUserDTO dto) 
+        public CreateUserCommand(UserDTO input) 
         {
-            DTO = dto;
+            Input = input;
         }
     }
 }

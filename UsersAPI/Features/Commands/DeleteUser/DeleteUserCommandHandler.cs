@@ -6,8 +6,8 @@ using Microsoft.Extensions.Caching.Distributed;
 using Shared.Models.Common;
 using Shared.Models.Contracts.User.PublishEvents;
 using UsersAPI.Data.Entities;
+using UsersAPI.Data.Repositories.Interfaces;
 using UsersAPI.Extensions;
-using UsersAPI.Interfaces.Repositories;
 
 namespace UsersAPI.Features.Commands.DeleteUser
 {
@@ -17,29 +17,29 @@ namespace UsersAPI.Features.Commands.DeleteUser
         IDistributedCache _cache,
         ILogger<DeleteUserCommandHandler> _logger
     )
-    : IRequestHandler<DeleteUserCommand, HandlerResult<bool>>
+    : IRequestHandler<DeleteUserCommand, HandlerResult>
     {
-        public async Task<HandlerResult<bool>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+        public async Task<HandlerResult> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
-            var username = request.Username;
-            var user = await _userRepository.GetUserAsync(username, cancellationToken);
+            var userId = request.Id;
+            var user = await _userRepository.GetEntityAsync(userId, cancellationToken);
 
-            if (!await _userRepository.UserExists(username))
-                return HandlerResult<bool>.Failure(
+            if (user == null)
+                return HandlerResult.Failure(
                     HandlerErrorType.NotFound, 
-                    $"User {username} does not exists");
+                    $"User with Id {userId} does not exists");
 
             _userRepository.RemoveUser(user);
             if(!await _userRepository.SaveChangesAsync(cancellationToken))
             {
-                return HandlerResult<bool>.Failure(
+                return HandlerResult.Failure(
                      HandlerErrorType.BadRequest,
                      "Something wend wrong during deleting");
             }
 
             await _publishEndpoint.Publish(new UserDeleted
             {
-                Username = username
+                Id = userId
             });
 
            // await _cache.UpdateVersionAsync($"{CONSTS.USER_PREFIX}:users");
@@ -47,7 +47,7 @@ namespace UsersAPI.Features.Commands.DeleteUser
 
             _logger.LogInformation($"User {user.Username} was deleted");
 
-            return HandlerResult<bool>.Success(true);
+            return HandlerResult.Success();
         }
     }
 }
