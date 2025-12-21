@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using CoursesApi.Data.Entities;
 using CoursesApi.Data.Repositories.Interfaces;
 using Elasticsearch.Net;
+using Microsoft.EntityFrameworkCore;
 using Shared.Extensions;
 using Shared.Models.Common;
 using Shared.Models.DTOs.Course;
@@ -43,7 +44,9 @@ namespace CoursesApi.Data.Repositories
 
         public async Task<Course?> GetEntityAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            return await _context.Courses.FindAsync(id, cancellationToken);
+            return await _context.Courses
+                .Include(x => x.Students)
+                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
 
         public void AddEntity(Course course)

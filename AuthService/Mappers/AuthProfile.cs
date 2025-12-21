@@ -12,8 +12,8 @@ namespace AuthAPI.Mappers
         {
             CreateMap<AppUser, AuthResponse>();
             CreateMap<RegisterRequest, AppUser>();
-            CreateMap<AddRole, AddRoleRequest>();
-            CreateMap<RemoveRole, RemoveRoleRequest>();
+            CreateMap<AddRoleEvent, AddRoleRequest>();
+            CreateMap<RemoveRoleEvent, RemoveRoleRequest>();
         }
     }
 }

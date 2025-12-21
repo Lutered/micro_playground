@@ -1,8 +1,5 @@
 ﻿using AuthAPI.Data.Entities;
-using AuthAPI.Models;
 using AuthAPI.Features.Commands.Register;
-using AuthAPI.Intrefaces;
-using AuthAPI.Mediator.Commands;
 using AuthAPI.Services;
 using AutoMapper;
 using FluentAssertions;
@@ -11,6 +8,9 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Playground_Tests.Unit_Tests.AuthAPI.Mocks;
 using Shared.Models.Contracts.User.PublishEvents;
+using Shared.Models.Requests.Auth;
+using Microsoft.Extensions.Options;
+using Shared.Models.Responses.Auth;
 
 namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
 {
@@ -19,17 +19,16 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
         [Fact]
         public async Task ReturnsOk()
         {
-            var configuration = ConfigurationMock.GetMock();
-
             var mockUserManager = UserManagerMock.GetMock();
             var mockPublisher = GetPublisherMock();
             var mockRepo = AutoRepoMock.GetMock();
             var mockLogger = NullLogger<RegisterCommandHandler>.Instance;
             var mockMapper = new Mock<IMapper>();
-   
+            var authSettings = Options.Create(AuthSettingsProvider.GetSettings());
+
             string username = "TestUser";
 
-            var registerDto = new RegisterDTO
+            var registerDto = new RegisterRequest
             {
                 Username = username,
                 Password = "Test123!"
@@ -41,7 +40,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
 
             mockMapper.Setup(m => m.Map<AppUser>(registerDto)).Returns(mappedUser);
 
-            var tokenService = new TokenService(mockRepo.Object, configuration, mockUserManager.Object);
+            var tokenService = new TokenService(mockRepo.Object, authSettings, mockUserManager.Object);
 
             var registerHandler = new RegisterCommandHandler(
                 mockUserManager.Object,
@@ -56,7 +55,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
             response.Should().NotBeNull();
             response.IsSuccess.Should().BeTrue();
             response.Value.Should().NotBeNull();
-            response.Value.Should().BeOfType<AuthResponseDTO>();
+            response.Value.Should().BeOfType<AuthResponse>();
             response.Value.Token.Should().NotBeNull();
             response.Value.RefreshToken.Should().NotBeNull();
             response.Value.Username.Should().Be(username);
@@ -65,17 +64,16 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
         [Fact]
         public async Task ReturnsError_WhenUserNameExists()
         {
-            var configuration = ConfigurationMock.GetMock();
-
             var mockUserManager = UserManagerMock.GetMock();
             var mockPublisher = GetPublisherMock();
             var mockRepo = AutoRepoMock.GetMock();
             var mockLogger = NullLogger<RegisterCommandHandler>.Instance;
             var mockMapper = new Mock<IMapper>();
+            var authSettings = Options.Create(AuthSettingsProvider.GetSettings());
 
             string username = "Existing_User";
 
-            var registerDto = new RegisterDTO
+            var registerDto = new RegisterRequest
             {
                 Username = username,
                 Password = "Test123!"
@@ -87,7 +85,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
 
             mockMapper.Setup(m => m.Map<AppUser>(registerDto)).Returns(mappedUser);
 
-            var tokenService = new TokenService(mockRepo.Object, configuration, mockUserManager.Object);
+            var tokenService = new TokenService(mockRepo.Object, authSettings, mockUserManager.Object);
 
             var registerHandler = new RegisterCommandHandler(
                 mockUserManager.Object,
@@ -107,8 +105,8 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
             var mockPublisher = new Mock<IPublishEndpoint>();
 
             mockPublisher
-            .Setup(x => x.Publish<UserCreated>(
-                It.IsAny<UserCreated>(),
+            .Setup(x => x.Publish<UserCreatedEvent>(
+                It.IsAny<UserCreatedEvent>(),
                 It.IsAny<CancellationToken>()
               ));
 

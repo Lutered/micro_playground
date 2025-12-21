@@ -2,11 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using Serilog.Sinks.Elasticsearch;
 using Serilog;
-using UsersAPI.Consumers;
 using UsersAPI.Data;
 using System.Reflection;
 using UsersAPI.Data.Repositories;
 using UsersAPI.Data.Repositories.Interfaces;
+using UsersAPI.Consumers.Events;
 
 namespace UsersAPI.Extensions
 {

@@ -19,7 +19,7 @@ namespace AuthAPI.Endpoints
                 {
                     var command = new AddRoleCommand(request);
                     var result = await mediator.Send(command, cancellationToken);
-                    return (IResult)result.ToActionResult();
+                    return result.ToResult();
 
                 }
             ).RequireAuthorization(policy => policy.RequireRole("Admin"));

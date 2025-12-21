@@ -37,7 +37,7 @@ namespace UsersAPI.Features.Commands.DeleteUser
                      "Something wend wrong during deleting");
             }
 
-            await _publishEndpoint.Publish(new UserDeleted
+            await _publishEndpoint.Publish(new UserDeletedEvent
             {
                 Id = userId
             });

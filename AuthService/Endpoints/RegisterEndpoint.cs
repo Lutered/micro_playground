@@ -1,5 +1,6 @@
 ﻿using AuthAPI.Features.Commands.Register;
 using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Interfaces.Common;
 using Shared.Models.Requests.Auth;
@@ -19,7 +20,7 @@ namespace AuthAPI.Endpoints
                 {
                     var command = new RegisterCommand(request);
                     var result = await mediator.Send(command, cancellationToken);
-                    return (IResult)result.ToActionResult();
+                    return result.ToResult();
                 }
             );
         }

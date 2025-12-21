@@ -1,12 +1,12 @@
 ﻿using AuthAPI.Data.Entities;
-using AuthAPI.Models;
 using AuthAPI.Features.Commands.Login;
-using AuthAPI.Infrastructure.Handlers;
-using AuthAPI.MediatR.Commands;
 using AuthAPI.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Playground_Tests.Unit_Tests.AuthAPI.Mocks;
+using AuthAPI.Features.Commands.Refresh;
+using Microsoft.Extensions.Options;
+using Shared.Models.Responses.Auth;
 
 namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
 {
@@ -20,6 +20,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
             var mockUserManager = UserManagerMock.GetMock();
             var mockRepo = AutoRepoMock.GetMock();
             var mockLogger = NullLogger<LoginCommandHandler>.Instance;
+            var authSettings = Options.Create(AuthSettingsProvider.GetSettings());
 
             string refreshToken = "correct_token";
 
@@ -27,10 +28,10 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
 
             var tokenService = new TokenService(
                 mockRepo.Object,
-                configuration,
+                authSettings,
                 mockUserManager.Object);
 
-            var refreshHandler = new RefreshHandler(
+            var refreshHandler = new RefreshCommandHandler(
                 mockRepo.Object,
                 tokenService,
                 mockLogger
@@ -41,7 +42,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
             response.Should().NotBeNull();
             response.IsSuccess.Should().BeTrue();
             response.Value.Should().NotBeNull();
-            response.Value.Should().BeOfType<AuthResponseDTO>();
+            response.Value.Should().BeOfType<AuthResponse>();
             response.Value.Token.Should().NotBeNull();
             response.Value.RefreshToken.Should().NotBeNull();
             response.Value.Username.Should().Be("Existing_User");

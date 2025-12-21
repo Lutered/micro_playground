@@ -1,8 +1,5 @@
 ﻿using AuthAPI.Data.Entities;
-using AuthAPI.Models;
 using AuthAPI.Features.Commands.Login;
-using AuthAPI.Mediator.Commands;
-using AuthAPI.MediatR.Commands;
 using AuthAPI.Services;
 using AutoMapper;
 using FluentAssertions;
@@ -10,6 +7,11 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Playground_Tests.Unit_Tests.AuthAPI.Mocks;
 using Shared.Models.Common;
+using Shared.Models.Requests.Auth;
+using AuthAPI.Settings;
+using Microsoft.Extensions.Options;
+using Shared.Models.Responses.Auth;
+using Microsoft.Extensions.Azure;
 
 namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
 {
@@ -18,31 +20,30 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
         [Fact]
         public async Task ReturnsOk()
         {
-            var configuration = ConfigurationMock.GetMock();
-
             var mockUserManager = UserManagerMock.GetMock();
             var mockRepo = AutoRepoMock.GetMock();
             var mockLogger = NullLogger<LoginCommandHandler>.Instance;
             var mockMapper = new Mock<IMapper>();
+            var authSettings = Options.Create(AuthSettingsProvider.GetSettings());
 
             string username = "Existing_User";
 
-            var loginDto = new LoginDTO
+            var loginRequest = new LoginRequest
             {
                 Username = username,
                 Password = "Test123!"
             };
 
-            var loginCommand = new LoginCommand(loginDto);
+            var loginCommand = new LoginCommand(loginRequest);
 
-            var mappedUser = new AppUser { UserName = loginDto.Username };
+            var mappedUser = new AppUser { UserName = loginRequest.Username };
 
-            mockMapper.Setup(m => m.Map<AppUser>(loginDto)).Returns(mappedUser);
+            mockMapper.Setup(m => m.Map<AppUser>(loginRequest)).Returns(mappedUser);
             mockUserManager.Setup(um => um.CheckPasswordAsync(It.IsAny<AppUser>(), It.IsAny<string>())).ReturnsAsync(true);
 
             var tokenService = new TokenService(
                 mockRepo.Object,
-                configuration, 
+                authSettings, 
                 mockUserManager.Object);
 
             var loginHandler = new LoginCommandHandler(
@@ -56,7 +57,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
             response.Should().NotBeNull();
             response.IsSuccess.Should().BeTrue();
             response.Value.Should().NotBeNull();
-            response.Value.Should().BeOfType<AuthResponseDTO>();
+            response.Value.Should().BeOfType<AuthResponse>();
             response.Value.Token.Should().NotBeNull();
             response.Value.RefreshToken.Should().NotBeNull();
             response.Value.Username.Should().Be(username);
@@ -65,16 +66,15 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
         [Fact]
         public async Task ReturnsError_WhenPasswordWrong()
         {
-            var configuration = ConfigurationMock.GetMock();
-
             var mockUserManager = UserManagerMock.GetMock();
             var mockRepo = AutoRepoMock.GetMock();
             var mockLogger = NullLogger<LoginCommandHandler>.Instance;
             var mockMapper = new Mock<IMapper>();
+            var authSettings = Options.Create(AuthSettingsProvider.GetSettings());
 
             string username = "Existing_User";
 
-            var loginDto = new LoginDTO
+            var loginDto = new LoginRequest
             {
                 Username = username,
                 Password = "Wrong_Password"
@@ -89,7 +89,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
 
             var tokenService = new TokenService(
                 mockRepo.Object,
-                configuration,
+                authSettings,
                 mockUserManager.Object);
 
             var loginHandler = new LoginCommandHandler(
@@ -102,7 +102,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Handlers
 
             response.Should().NotBeNull();
             response.IsSuccess.Should().BeFalse();
-            response.Error.Type.Should().Be(HandlerErrorType.Unauthorized);
+            response.Error.Type.Should().Be(HandlerErrorType.NotFound);
         }
     }
 }

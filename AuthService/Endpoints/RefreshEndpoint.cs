@@ -18,7 +18,7 @@ namespace AuthAPI.Endpoints
                 {
                     var command = new RefreshCommand(refreshToken);
                     var result = await mediator.Send(command, cancellationToken);
-                    return (IResult)result.ToActionResult();
+                    return result.ToResult();
                 }
             );
         }

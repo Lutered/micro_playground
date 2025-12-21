@@ -7,9 +7,9 @@ using Shared.Models.Requests.Auth;
 
 namespace AuthAPI.Consumers
 {
-    public class AddRoleConsumer(IMediator mediator, IMapper _mapper) : IConsumer<AddRole>
+    public class AddRoleConsumer(IMediator mediator, IMapper _mapper) : IConsumer<AddRoleEvent>
     {
-        public async Task Consume(ConsumeContext<AddRole> context)
+        public async Task Consume(ConsumeContext<AddRoleEvent> context)
         {
             var contract = context.Message;
 

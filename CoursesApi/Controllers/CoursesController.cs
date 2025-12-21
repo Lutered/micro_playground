@@ -17,7 +17,7 @@ namespace CoursesApi.Controllers
     {
         [HttpGet]
         public async Task<IActionResult> GetCourses(
-            GetCoursesRequest request, 
+            [FromQuery]GetCoursesRequest request, 
             CancellationToken cancellationToken = default)
         {
             var query = new GetCoursesQuery(request);

@@ -5,14 +5,14 @@ using Shared.Models.Contracts.User.PublishEvents;
 using Shared.Models.DTOs.User;
 using UsersAPI.Features.Commands.CreateUser;
 
-namespace UsersAPI.Consumers
+namespace UsersAPI.Consumers.Events
 {
     public class UserCreatedConsumer(
         IMediator _mediator,
         IMapper _mapper)
-      : IConsumer<UserCreated>
+      : IConsumer<UserCreatedEvent>
     {
-        public async Task Consume(ConsumeContext<UserCreated> context)
+        public async Task Consume(ConsumeContext<UserCreatedEvent> context)
         {
             var contract = context.Message;
 

@@ -7,9 +7,9 @@ using Shared.Models.Requests.Auth;
 
 namespace AuthAPI.Consumers
 {
-    public class RemoveRoleConsumer(IMediator mediator, IMapper _mapper) : IConsumer<RemoveRole>
+    public class RemoveRoleConsumer(IMediator mediator, IMapper _mapper) : IConsumer<RemoveRoleEvent>
     {
-        public async Task Consume(ConsumeContext<RemoveRole> context)
+        public async Task Consume(ConsumeContext<RemoveRoleEvent> context)
         {
             var contract = context.Message;
 

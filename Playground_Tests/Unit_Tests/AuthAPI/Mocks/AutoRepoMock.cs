@@ -11,11 +11,11 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Mocks
             var mockAuthRepo = new Mock<IAuthRepository>();
 
             mockAuthRepo
-                .Setup(r => r.GetRefereshToken("correct_token"))
+                .Setup(r => r.GetRefereshToken("correct_token", new CancellationToken()))
                 .ReturnsAsync(new RefreshToken() { 
                     User = new AppUser() 
                     { 
-                        Id = 1, 
+                        Id = Guid.NewGuid(), 
                         UserName = "Existing_User" 
                     },
                     Token = Guid.NewGuid().ToString(),
@@ -26,12 +26,12 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Mocks
                 });
 
             mockAuthRepo
-               .Setup(r => r.GetRefereshToken("expired_token"))
+               .Setup(r => r.GetRefereshToken("expired_token", new CancellationToken()))
                .ReturnsAsync(new RefreshToken()
                {
                    User = new AppUser()
                    {
-                       Id = 1,
+                       Id = Guid.NewGuid(),
                        UserName = "Existing_User"
                    },
                    Token = Guid.NewGuid().ToString(),
@@ -45,7 +45,7 @@ namespace Playground_Tests.Unit_Tests.AuthAPI.Mocks
               .Setup(r => r.AddRefreshToken(It.IsAny<RefreshToken>()));
 
             mockAuthRepo
-                .Setup(r => r.SaveChangesAsync());
+                .Setup(r => r.SaveChangesAsync(new CancellationToken()));
 
             return mockAuthRepo;
         }

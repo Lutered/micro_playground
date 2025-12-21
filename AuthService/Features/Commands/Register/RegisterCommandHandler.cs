@@ -46,7 +46,7 @@ namespace AuthAPI.Features.Commands.Register
 
             _logger.LogInformation($"User {user.UserName} was created successfuly");
 
-            await _publishEndpoint.Publish(new UserCreated
+            await _publishEndpoint.Publish(new UserCreatedEvent
             {
                 Id = user.Id,
                 Username = user.UserName,

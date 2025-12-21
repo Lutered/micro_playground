@@ -1,6 +1,6 @@
 ﻿namespace Shared.Models.Contracts.User.PublishEvents
 {
-    public record class UserCreated
+    public record class UserCreatedEvent
     {
         public Guid Id { get; init; }
         public string Username { get; init; }

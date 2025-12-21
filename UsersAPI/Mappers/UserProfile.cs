@@ -12,7 +12,7 @@ namespace UsersAPI.Mappers
         {
             CreateMap<UserDTO, User>();
             CreateMap<User, UserDTO>();
-            CreateMap<UserCreated, UserDTO>();
+            CreateMap<UserCreatedEvent, UserDTO>();
         }
     }
 }
