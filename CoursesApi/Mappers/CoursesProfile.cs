@@ -9,8 +9,10 @@ namespace CoursesApi.Mappers
     {
         public CoursesProfile() 
         {
-            CreateMap<Course, CourseDTO>();
-            CreateMap<CreateCourseRequest, Course>();
+            CreateMap<Course, CourseDTO>()
+                    .ForMember(desc => desc.AutorName, opt => opt.MapFrom(src => $"{src.Author.FirstName} {src.Author.LastName}"));
+            CreateMap<CreateCourseRequest, Course>()
+                .ForMember(desc => desc.AutorId, opt => opt.MapFrom(src => Guid.Empty));
             CreateMap<UpdateCourseRequest, Course>();
         }
     }

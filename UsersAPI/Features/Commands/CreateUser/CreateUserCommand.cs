@@ -5,7 +5,7 @@ using UsersAPI.DTOs;
 
 namespace UsersAPI.Features.Commands.CreateUser
 {
-    public class CreateUserCommand : IRequest<HandlerResult<Guid>>
+    public class CreateUserCommand : IRequest<HandlerResult<UserDTO>>
     {
         public UserDTO Input { get; set; }
 

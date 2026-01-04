@@ -7,10 +7,8 @@ using Shared.Models.DTOs.Course;
 using Shared.Models.DTOs.User;
 using Shared.Models.Requests.User;
 using System.Linq.Expressions;
-using System.Threading;
 using UsersAPI.Data.Entities;
 using UsersAPI.Data.Repositories.Interfaces;
-using UsersAPI.DTOs;
 
 namespace UsersAPI.Data.Repositories
 {
@@ -19,48 +17,39 @@ namespace UsersAPI.Data.Repositories
         IMapper _mapper
     ) : IUserRepository
     {
-        Dictionary<string, Expression<Func<UserDTO, object>>> sortMap = new()
-        {
-            // ["Id"] = x => x.Id
-        };
+      
 
         public async Task<bool> IsUserExists(string username)
         {
             return await _context.Users.AnyAsync(x => x.Username == username);
         }
 
-        public async Task<PagedList<UserDTO>> GetUsersAsync(GetUsersRequest request, CancellationToken cancellationToken)
+        public IQueryable GetBaseQuery()
         {
-            var query = _context.Users
-                        .ProjectTo<UserDTO>(_mapper.ConfigurationProvider);
-
-            if (!string.IsNullOrWhiteSpace(request.Sort)) 
-                query = query.ApplySort(request.Sort, sortMap);
-
-            return await query.ToPagedListAsync(request.Page, request.PageSize);
+            return _context.Users.AsQueryable();
         }
 
-        public async Task<UserDTO> GetUserAsync(Guid userId, CancellationToken cancellationToken)
-        {
-            return await _context.Users
-                        .ProjectTo<UserDTO>(_mapper.ConfigurationProvider)
-                        .FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
-        }
+        //public async Task<UserDTO> GetUserAsync(Guid userId, CancellationToken cancellationToken)
+        //{
+        //    return await _context.Users
+        //                .ProjectTo<UserDTO>(_mapper.ConfigurationProvider)
+        //                .FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
+        //}
 
-        public async Task<UserDTO> GetUserAsync(string username, CancellationToken cancellationToken)
-        {
-            return await _context.Users
-                        .Where(x => x.Username == username)
-                        .ProjectTo<UserDTO>(_mapper.ConfigurationProvider)
-                        .FirstOrDefaultAsync(cancellationToken);
-        }
+        //public async Task<UserDTO> GetUserAsync(string username, CancellationToken cancellationToken)
+        //{
+        //    return await _context.Users
+        //                .Where(x => x.Username == username)
+        //                .ProjectTo<UserDTO>(_mapper.ConfigurationProvider)
+        //                .FirstOrDefaultAsync(cancellationToken);
+        //}
 
-        public async Task<User> GetEntityAsync(Guid userId, CancellationToken cancellationToken)
+        public async Task<User> GetUserAsync(Guid userId, CancellationToken cancellationToken)
         {
             return await _context.Users
                             .FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
         }
-        public async Task<User> GetEntityAsync(string username, CancellationToken cancellationToken)
+        public async Task<User> GetUserAsync(string username, CancellationToken cancellationToken)
         {
             return await _context.Users
                             .FirstOrDefaultAsync(x => x.Username == username, cancellationToken);

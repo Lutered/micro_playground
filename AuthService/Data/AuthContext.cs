@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace AuthAPI.Data
 {
@@ -18,10 +19,10 @@ namespace AuthAPI.Data
     {
         public DbSet<RefreshToken> RefreshTokens { get; set; }
 
-        public AuthContext(DbContextOptions options) : base(options) 
-        { 
+        public AuthContext(DbContextOptions<AuthContext> options) : base(options)
+        {
             //Database.EnsureDeleted(); 
-            Database.EnsureCreated(); 
+            //Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

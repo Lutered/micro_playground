@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Configuration\" />
-    <Folder Include="Endpoints\" />
+    <Folder Include="Configurations\" />
+    <Folder Include="Data\Migrations\" />
     <Folder Include="Middlewares\" />
     <Folder Include="PrivateStaticFiles\" />
     <Folder Include="Services\" />

@@ -18,7 +18,7 @@ var rabbitMq = builder
 
 Console.WriteLine("RabbitMq Password - " + rabbitMq.Resource.PasswordParameter.Value);
 
-var redis = builder.AddRedis("redis");
+var redis = builder.AddRedis("redis").WithRedisCommander();
 
 var elasticSearch = builder
                     .AddElasticsearch("elasticsearch")

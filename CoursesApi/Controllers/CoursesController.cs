@@ -26,7 +26,9 @@ namespace CoursesApi.Controllers
         }
 
         [HttpGet("mycourses")]
-        public async Task<IActionResult> GetMyCourses(PagedRequest request, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetMyCourses(
+            [FromQuery]PagedRequest request, 
+            CancellationToken cancellationToken = default)
         {
             string userIdStr = User.FindFirst(JwtRegisteredClaimNames.NameId)?.Value;
 
@@ -47,7 +49,7 @@ namespace CoursesApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCourse(CreateCourseRequest request, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> CreateCourse([FromBody]CreateCourseRequest request, CancellationToken cancellationToken = default)
         {
             var command = new CreateCourseCommand(request);
             var result = await _mediator.Send(command, cancellationToken);
@@ -55,7 +57,7 @@ namespace CoursesApi.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateCourse(Guid id, UpdateCourseRequest request, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> UpdateCourse(Guid id, [FromBody]UpdateCourseRequest request, CancellationToken cancellationToken = default)
         {
             var command = new UpdateCourseCommand(id, request);
             var result = await _mediator.Send(command, cancellationToken);

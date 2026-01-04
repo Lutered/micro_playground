@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
 
-namespace UsersAPI.Extensions
+namespace Shared.Extensions
 {
     public static class IDistributedCacheExtension
     {
@@ -9,14 +9,16 @@ namespace UsersAPI.Extensions
 
         public static async Task<string> GetRawAsync(
             this IDistributedCache distributedCache, 
-            string key)
+            string key,
+            CancellationToken cancellationToken = default)
         {
             return await distributedCache.GetStringAsync(key);
         }
 
         public static async Task<T> GetAsync<T>(
             this IDistributedCache distributedCache,
-            string key)
+            string key,
+            CancellationToken cancellationToken = default)
         {
             var cacheData = await distributedCache.GetStringAsync(key);
 
@@ -28,8 +30,8 @@ namespace UsersAPI.Extensions
         public static async Task<bool> CreateRawAsync(
             this IDistributedCache distributedCache,
             string key,
-            string value
-            )
+            string value,
+            CancellationToken cancellationToken = default)
         {
             try
             {
@@ -46,7 +48,8 @@ namespace UsersAPI.Extensions
         public static async Task<bool> CreateAsync<T>(
             this IDistributedCache distributedCache,
             string key,
-            T value)
+            T value,
+            CancellationToken cancellationToken = default)
         {
             var cacheData = JsonSerializer.Serialize(value);
 
@@ -55,8 +58,8 @@ namespace UsersAPI.Extensions
 
         public static async Task<uint> GetVersionAsync(
             this IDistributedCache distributedCache, 
-            string key
-        )
+            string key,
+            CancellationToken cancellationToken = default)
         {
             string fullKey = $"{key}:version";
             var versionStr = await distributedCache.GetStringAsync(fullKey);

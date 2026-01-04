@@ -10,7 +10,7 @@ namespace Shared.Extensions
         {
             var count = await query.CountAsync();
             var items = await query.Skip((pageNum - 1) * pageSize).Take(pageSize).ToListAsync();
-            return new PagedList<T>(items, count, pageNum, pageSize);
+            return new PagedList<T>(items, pageNum, pageSize, count);
         }
 
         public static IQueryable<T> ApplySort<T>(

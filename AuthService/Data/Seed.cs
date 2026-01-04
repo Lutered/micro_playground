@@ -6,7 +6,7 @@ namespace AuthAPI.Data
 {
     public class Seed
     {
-        public static async Task SeedRoles(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
+        public static async Task SeedData(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
         {
             await EnsureRoleAsync(roleManager, "Member");
             await EnsureRoleAsync(roleManager, "Saler");
@@ -35,7 +35,7 @@ namespace AuthAPI.Data
             string password, 
             string role)
         {
-            if (!await userManager.UserExistsAsync(username)) return;
+            if (await userManager.UserExistsAsync(username)) return;
             
             var user = new AppUser
             {

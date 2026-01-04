@@ -7,6 +7,10 @@ using System.Reflection;
 using UsersAPI.Data.Repositories;
 using UsersAPI.Data.Repositories.Interfaces;
 using UsersAPI.Consumers.Events;
+using UsersAPI.Consumers.Requests;
+using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Serialization;
+using UsersAPI.Helpers;
 
 namespace UsersAPI.Extensions
 {
@@ -14,9 +18,14 @@ namespace UsersAPI.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
-            services.AddControllers();
+            services.AddControllers()
+               .AddNewtonsoftJson();
+
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c => { 
+                //c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" }); 
+            });
+            //services.AddSwaggerGenNewtonsoftSupport();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -28,6 +37,7 @@ namespace UsersAPI.Extensions
             services.AddMassTransit(c =>
             {
                 c.AddConsumer<UserCreatedConsumer>();
+                c.AddConsumer<GetUserById>();
 
                 c.UsingRabbitMq((ctx, cfg) =>
                 {
@@ -47,6 +57,7 @@ namespace UsersAPI.Extensions
             });
 
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<UserCacheHelper>();
 
             return services;
         }

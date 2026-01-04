@@ -2,6 +2,8 @@
 using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
+using Shared.Configurations;
+using Shared.Extensions;
 using Shared.Models.Common;
 using Shared.Models.DTOs.User;
 using UsersAPI.Data.Repositories.Interfaces;
@@ -24,8 +26,8 @@ namespace UsersAPI.Features.Queries.GetUser
             string username = request.Username;
 
             string cacheKey = id != null ? 
-                $"{CACHEKEYS.USER_KEY}:user_id:{id.ToString()}" :
-                $"{CACHEKEYS.USER_KEY}:user_name:{username}";
+                $"{CacheKeys.User.UserId}:{id.ToString()}" :
+                $"{CacheKeys.User.UserName}:{username}";
 
             var cachedUser = await _cache.GetAsync<UserDTO>(cacheKey);
 
@@ -39,10 +41,12 @@ namespace UsersAPI.Features.Queries.GetUser
             if (user is null)
                 return HandlerResult<UserDTO>.Failure(HandlerErrorType.NotFound, "User was not found");
 
-            await _cache.CreateAsync($"{CACHEKEYS.USER_KEY}:user_id:{user.Id.ToString()}", user);
-            await _cache.CreateAsync($"{CACHEKEYS.USER_KEY}:user_name:{user.Username.ToString()}", user);
+            var userDto = _mapper.Map<UserDTO>(user);
 
-            return HandlerResult<UserDTO>.Success(user);
+            await _cache.CreateAsync($"{CacheKeys.User.UserId}:{user.Id.ToString()}", userDto);
+            await _cache.CreateAsync($"{CacheKeys.User.UserName}:{user.Username.ToString()}", userDto);
+
+            return HandlerResult<UserDTO>.Success(userDto);
         }
     }
 }

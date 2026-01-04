@@ -3,6 +3,7 @@ using CoursesApi.Data.Repositories;
 using CoursesApi.Data.Repositories.Interfaces;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Shared.Models.Contracts.User.Requests;
 using System.Reflection;
 
 namespace CoursesApi.Extensions
@@ -34,6 +35,7 @@ namespace CoursesApi.Extensions
             services.AddMassTransit(c =>
             {
                 //c.AddConsumer<UserCreatedConsumer>();
+                c.AddRequestClient<GetUserRequest>();
 
                 c.UsingRabbitMq((ctx, cfg) =>
                 {

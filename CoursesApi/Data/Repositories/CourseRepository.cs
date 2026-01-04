@@ -27,6 +27,7 @@ namespace CoursesApi.Data.Repositories
          ) 
         {
             var query = _context.Courses
+                            .Include(x => x.Author)
                             .ProjectTo<CourseDTO>(_mapper.ConfigurationProvider);
 
             if (!string.IsNullOrWhiteSpace(request.Sort)) 

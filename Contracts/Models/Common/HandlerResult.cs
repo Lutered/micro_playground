@@ -1,4 +1,9 @@
-﻿namespace Shared.Models.Common
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Shared.Models.Responses;
+using System.Net;
+
+namespace Shared.Models.Common
 {
     public class HandlerResult : BaseResult<object>
     {
@@ -37,4 +42,6 @@
         public static HandlerResult<T> Failure(HandlerErrorType errorType, string message = "")
             => new HandlerResult<T>(false, default, new HandlerError(message, errorType));
     }
+
+    
 }

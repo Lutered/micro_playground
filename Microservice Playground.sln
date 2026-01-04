@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground_Tests", "Playgro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsersAPI", "UsersAPI\UsersAPI.csproj", "{C8D967DC-9DDA-AE0F-E3AA-A8220A550084}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoursesApi", "CoursesApi\CoursesApi.csproj", "{6FD0E6D4-F3B8-48A2-DAD1-851FA5FFEFC4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoursesAPI", "CoursesApi\CoursesAPI.csproj", "{6FD0E6D4-F3B8-48A2-DAD1-851FA5FFEFC4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject

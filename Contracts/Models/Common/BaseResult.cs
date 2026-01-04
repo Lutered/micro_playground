@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Shared.Helpers;
+using Shared.Models.Responses;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Shared.Models.Common
 {
@@ -17,8 +17,10 @@ namespace Shared.Models.Common
 
         public virtual IActionResult ToActionResult()
         {
-            if (this.IsSuccess) return new OkObjectResult(this.Value);
-
+            if (this.IsSuccess)    
+                return new OkObjectResult(this.Value);
+            
+               
             switch (this.Error.Type)
             {
                 case HandlerErrorType.BadRequest:

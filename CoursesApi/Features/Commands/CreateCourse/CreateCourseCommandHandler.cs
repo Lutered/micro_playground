@@ -52,6 +52,7 @@ namespace CoursesApi.Features.Commands.CreateCourse
             }
 
             var courseEntity = _mapper.Map<Course>(input);
+            courseEntity.Author = participant;
 
             _courseRepo.AddEntity(courseEntity);
             bool isSaved = await _courseRepo.SaveChangesAsync();
