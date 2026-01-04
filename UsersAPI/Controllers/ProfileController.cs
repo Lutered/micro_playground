@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Models.Requests.User;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using UsersAPI.Features.Commands.UpdateUser;
 using UsersAPI.Features.Queries.GetUser;
 using UsersAPI.Features.Queries.GetUsers;
@@ -20,7 +21,7 @@ namespace UsersAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProfile(CancellationToken cancellationToken = default)
         {
-            string userIdStr = User.FindFirst(JwtRegisteredClaimNames.NameId)?.Value;
+            string userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (!Guid.TryParse(userIdStr, out Guid userId))
                 return BadRequest("User Id was not found");
@@ -34,7 +35,7 @@ namespace UsersAPI.Controllers
             [FromBody] UpdateUserRequest request,
             CancellationToken cancellationToken = default)
         {
-            string userIdStr = User.FindFirst(JwtRegisteredClaimNames.NameId)?.Value;
+            string userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (!Guid.TryParse(userIdStr, out Guid userId))
                 return BadRequest("User Id was not found");

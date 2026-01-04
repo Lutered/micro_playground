@@ -1,13 +1,18 @@
-﻿using CoursesApi.Features.Commands.CreateCourse;
+﻿using CoursesApi.Features.Commands.AddToCourse;
+using CoursesApi.Features.Commands.CreateCourse;
 using CoursesApi.Features.Commands.DeleteCourse;
+using CoursesApi.Features.Commands.RemoveFromCourse;
 using CoursesApi.Features.Commands.UpdateCourse;
 using CoursesApi.Features.Queries.GetCourse;
 using CoursesApi.Features.Queries.GetCourses;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Models.Requests;
 using Shared.Models.Requests.Course;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Threading;
 
 namespace CoursesApi.Controllers
 {
@@ -72,16 +77,32 @@ namespace CoursesApi.Controllers
             return result.ToActionResult();
         }
 
+        [Authorize]
         [HttpPost("addMe/{courseId}")]
-        public async Task<IActionResult> AddToCourse(Guid courseId)
+        public async Task<IActionResult> AddToCourse(Guid courseId, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            string userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!Guid.TryParse(userIdStr, out Guid userId))
+                return BadRequest("User Id was not found");
+
+            var command = new AddToCourseCommand(userId, courseId);
+            var result = await _mediator.Send(command, cancellationToken);
+            return result.ToActionResult();
         }
 
+        [Authorize]
         [HttpPost("removeMe/{courseId}")]
-        public async Task<IActionResult> RemoveFromCourse(Guid courseId)
+        public async Task<IActionResult> RemoveFromCourse(Guid courseId, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            string userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!Guid.TryParse(userIdStr, out Guid userId))
+                return BadRequest("User Id was not found");
+
+            var command = new RemoveFromCourseCommand(userId, courseId);
+            var result = await _mediator.Send(command, cancellationToken);
+            return result.ToActionResult();
         }
     }
 }
