@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Identity;
 using Shared.Models.Common;
 using AuthAPI.Services.Interfaces;
 using Shared.Models.Contracts.User.PublishEvents;
+using AuthAPI.Consumers.CreateUser;
+using Shared.Sagas.CreateUser.Events;
 
 namespace AuthAPI.Features.Commands.Register
 {
@@ -16,6 +18,7 @@ namespace AuthAPI.Features.Commands.Register
         IMapper _mapper,
         ITokenService _tokenService,
         IPublishEndpoint _publishEndpoint,
+        IRequestClient<UserCreatedEvent> _client,
         ILogger<RegisterCommandHandler> _logger
      ) : IRequestHandler<RegisterCommand, HandlerResult<AuthResponse>>
     {
@@ -46,13 +49,15 @@ namespace AuthAPI.Features.Commands.Register
 
             _logger.LogInformation($"User {user.UserName} was created successfuly");
 
-            await _publishEndpoint.Publish(new UserCreatedEvent
-            {
-                Id = user.Id,
-                Username = user.UserName,
-                Email = user.Email,
-                Age = user.Age
-            });
+            //await _publishEndpoint.Publish(new UserCreatedEvent
+            //{
+            //    Id = user.Id,
+            //    Username = user.UserName,
+            //    Email = user.Email,
+            //    Age = user.Age
+            //});
+
+            await _client.GetResponse<CreateUserCompleteEvent>(new UserCreatedEvent());
 
             return HandlerResult<AuthResponse>.Success(new AuthResponse()
             {

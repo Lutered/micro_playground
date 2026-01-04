@@ -1,6 +1,4 @@
 ﻿using AuthAPI.Data;
-using AuthAPI.Sagas;
-using AuthAPI.Sagas.Instances;
 using AuthAPI.Services;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +10,7 @@ using System.Reflection;
 using AuthAPI.Data.Repositories;
 using AuthAPI.Data.Repositories.Interfaces;
 using AuthAPI.Services.Interfaces;
+using Shared.Sagas.CreateUser;
 
 namespace AuthAPI.Extensions
 {
@@ -29,7 +28,8 @@ namespace AuthAPI.Extensions
 
             services.AddDbContext<AuthContext>(opt =>
             {
-                opt.UseNpgsql(config.GetConnectionString("authdb"));   
+                opt.UseNpgsql(config.GetConnectionString("authdb"))
+                    .LogTo(Console.WriteLine, LogLevel.Information);   
             });
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -40,6 +40,9 @@ namespace AuthAPI.Extensions
             {
                 //c.AddRequestClient<UserCreated>();
                 c.AddConsumer<UserDeletedConsumer>();
+
+                c.AddSaga<CreateUserSagaInstance>()
+                   .InMemoryRepository();
 
                 c.UsingRabbitMq((ctx, cfg) =>
                 {
