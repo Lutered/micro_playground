@@ -7,7 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Shared.Models.Common;
 using AuthAPI.Services.Interfaces;
-using Shared.Models.Contracts.User.PublishEvents;
+using Shared.Models.Contracts.User.Requests.CreateUser;
 
 namespace AuthAPI.Features.Commands.Register
 {
@@ -15,7 +15,7 @@ namespace AuthAPI.Features.Commands.Register
         UserManager<AppUser> _userManager,
         IMapper _mapper,
         ITokenService _tokenService,
-        IPublishEndpoint _publishEndpoint,
+        IRequestClient<CreateUserRequest> _client,
         ILogger<RegisterCommandHandler> _logger
      ) : IRequestHandler<RegisterCommand, HandlerResult<AuthResponse>>
     {
@@ -46,13 +46,34 @@ namespace AuthAPI.Features.Commands.Register
 
             _logger.LogInformation($"User {user.UserName} was created successfuly");
 
-            await _publishEndpoint.Publish(new UserCreatedEvent
+            bool isRequestSuccess = false;
+            string requestErrorMessage = string.Empty; 
+
+            try
             {
-                Id = user.Id,
-                Username = user.UserName,
-                Email = user.Email,
-                Age = user.Age
-            });
+                var requestResult = await _client.GetResponse<CreateUserResponse>(new CreateUserRequest
+                {
+                    Id = user.Id,
+                    Username = user.UserName,
+                    Email = user.Email,
+                    Age = user.Age
+                });
+
+                isRequestSuccess = requestResult.Message.Success;
+                requestErrorMessage = requestResult.Message.ErrorMessage;
+            }
+            catch(Exception ex)
+            {
+                requestErrorMessage = ex.Message;
+            }
+
+            if(!isRequestSuccess)
+            {
+                await _userManager.DeleteAsync(user);
+
+                _logger.LogError($"Failed to create user with {user.Id}. External service error: " + requestErrorMessage);
+                throw new Exception("Error during creating a user");
+            }
 
             return HandlerResult<AuthResponse>.Success(new AuthResponse()
             {

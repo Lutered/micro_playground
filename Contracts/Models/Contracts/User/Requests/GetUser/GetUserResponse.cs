@@ -1,6 +1,6 @@
 ﻿using Shared.Models.DTOs.User;
 
-namespace Shared.Models.Contracts.User.Responses
+namespace Shared.Models.Contracts.User.Requests.GetUser
 {
     public class GetUserResponse
     {

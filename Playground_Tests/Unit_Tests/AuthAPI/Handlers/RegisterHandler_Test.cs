@@ -7,7 +7,7 @@ using MassTransit;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Playground_Tests.Unit_Tests.AuthAPI.Mocks;
-using Shared.Models.Contracts.User.PublishEvents;
+using Shared.Models.Contracts.User.Events;
 using Shared.Models.Requests.Auth;
 using Microsoft.Extensions.Options;
 using Shared.Models.Responses.Auth;

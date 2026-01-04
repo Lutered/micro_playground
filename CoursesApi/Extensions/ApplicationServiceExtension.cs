@@ -3,7 +3,7 @@ using CoursesApi.Data.Repositories;
 using CoursesApi.Data.Repositories.Interfaces;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
-using Shared.Models.Contracts.User.Requests;
+using Shared.Models.Contracts.User.Requests.GetUser;
 using System.Reflection;
 
 namespace CoursesApi.Extensions

@@ -1,8 +1,9 @@
-﻿namespace Shared.Models.Contracts.User.PublishEvents
+﻿namespace Shared.Models.Contracts.User.Events
 {
-    public record class AddRoleEvent
+    public record class RemoveRoleEvent
     {
         public string Username { get; init; }
         public string RoleName { get; init; }
     }
 }
+

@@ -1,4 +1,4 @@
-﻿namespace Shared.Models.Contracts.User.Requests
+﻿namespace Shared.Models.Contracts.User.Requests.GetUser
 {
     public class GetUserRequest
     {

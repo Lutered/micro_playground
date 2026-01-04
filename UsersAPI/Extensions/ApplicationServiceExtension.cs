@@ -6,11 +6,11 @@ using UsersAPI.Data;
 using System.Reflection;
 using UsersAPI.Data.Repositories;
 using UsersAPI.Data.Repositories.Interfaces;
-using UsersAPI.Consumers.Events;
-using UsersAPI.Consumers.Requests;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using UsersAPI.Helpers;
+using UsersAPI.Consumers;
+using Shared.Models.Contracts.User.Requests.DeleteUser;
 
 namespace UsersAPI.Extensions
 {
@@ -36,8 +36,10 @@ namespace UsersAPI.Extensions
 
             services.AddMassTransit(c =>
             {
-                c.AddConsumer<UserCreatedConsumer>();
+                c.AddConsumer<CreateUserConsumer>();
                 c.AddConsumer<GetUserById>();
+
+                c.AddRequestClient<DeleteUserRequest>();
 
                 c.UsingRabbitMq((ctx, cfg) =>
                 {

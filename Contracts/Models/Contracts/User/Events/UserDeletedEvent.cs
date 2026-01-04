@@ -1,4 +1,4 @@
-﻿namespace Shared.Models.Contracts.User.PublishEvents
+﻿namespace Shared.Models.Contracts.User.Events
 {
     public record class UserDeletedEvent
     {

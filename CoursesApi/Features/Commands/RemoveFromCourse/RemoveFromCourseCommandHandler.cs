@@ -3,7 +3,7 @@ using CoursesApi.Data.Repositories.Interfaces;
 using MassTransit;
 using MediatR;
 using Shared.Models.Common;
-using Shared.Models.Contracts.User.Requests;
+using Shared.Models.Contracts.User.Requests.GetUser;
 using Shared.Models.DTOs.User;
 
 namespace CoursesApi.Features.Commands.RemoveFromCourse

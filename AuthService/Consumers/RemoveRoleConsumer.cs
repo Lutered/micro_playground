@@ -2,7 +2,7 @@
 using AutoMapper;
 using MassTransit;
 using MediatR;
-using Shared.Models.Contracts.User.PublishEvents;
+using Shared.Models.Contracts.User.Events;
 using Shared.Models.Requests.Auth;
 
 namespace AuthAPI.Consumers

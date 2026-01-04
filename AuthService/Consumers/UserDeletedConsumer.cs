@@ -1,7 +1,10 @@
 ﻿using AuthAPI.Features.Commands.DeleteUser;
 using MassTransit;
 using MediatR;
-using Shared.Models.Contracts.User.PublishEvents;
+using Shared.Models.Contracts.User.Events;
+using Shared.Models.Contracts.User.Requests.CreateUser;
+using Shared.Models.Contracts.User.Requests.DeleteUser;
+using Shared.Models.DTOs.User;
 
 namespace AuthAPI.Consumers
 {
@@ -11,7 +14,27 @@ namespace AuthAPI.Consumers
         {
             var contract = context.Message;
 
-            await _mediator.Send(new DeleteUserCommand(contract.Id));
+            try
+            {
+                var result = await _mediator.Send(new DeleteUserCommand(contract.Id));
+
+                if (!result.IsSuccess)
+                    throw new Exception(result.Error.Message);
+
+                await context.RespondAsync(new DeleteUserResponse()
+                {
+                    Success = true,
+                    ErrorMessage = string.Empty
+                });
+            }
+            catch (Exception ex)
+            {
+                await context.RespondAsync(new DeleteUserResponse()
+                {
+                    Success = false,
+                    ErrorMessage = ex.Message
+                });
+            }
         }
     }
 }

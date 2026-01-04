@@ -1,6 +1,6 @@
 ﻿using AuthAPI.Data.Entities;
 using AutoMapper;
-using Shared.Models.Contracts.User.PublishEvents;
+using Shared.Models.Contracts.User.Events;
 using Shared.Models.Requests.Auth;
 using Shared.Models.Responses.Auth;
 

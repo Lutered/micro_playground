@@ -1,10 +1,10 @@
 ﻿using MassTransit;
 using MediatR;
-using Shared.Models.Contracts.User.Requests;
+using Shared.Models.Contracts.User.Requests.GetUser;
 using Shared.Models.DTOs.User;
 using UsersAPI.Features.Queries.GetUser;
 
-namespace UsersAPI.Consumers.Requests
+namespace UsersAPI.Consumers
 {
     public class GetUserById(IMediator _mediator)
         : IConsumer<GetUserRequest>
@@ -15,7 +15,7 @@ namespace UsersAPI.Consumers.Requests
 
             var user = await _mediator.Send(new GetUserQuery(contract.UserId));
 
-            await context.RespondAsync<UserDTO>(user.Value);
+            await context.RespondAsync(user.Value);
         }
     }
 }

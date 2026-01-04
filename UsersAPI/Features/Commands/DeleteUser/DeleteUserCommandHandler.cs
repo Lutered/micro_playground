@@ -2,11 +2,14 @@
 using Humanizer;
 using MassTransit;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Distributed;
 using Shared.Configurations;
 using Shared.Extensions;
 using Shared.Models.Common;
-using Shared.Models.Contracts.User.PublishEvents;
+using Shared.Models.Contracts.User.Events;
+using Shared.Models.Contracts.User.Requests.CreateUser;
+using Shared.Models.Contracts.User.Requests.DeleteUser;
 using UsersAPI.Data.Entities;
 using UsersAPI.Data.Repositories.Interfaces;
 using UsersAPI.Extensions;
@@ -16,7 +19,7 @@ namespace UsersAPI.Features.Commands.DeleteUser
 {
     public class DeleteUserCommandHandler(
         IUserRepository _userRepository,
-        IPublishEndpoint _publishEndpoint,
+        IRequestClient<DeleteUserRequest> _client,
         IDistributedCache _cache,
         ILogger<DeleteUserCommandHandler> _logger,
         UserCacheHelper _userCacheHelper
@@ -33,18 +36,33 @@ namespace UsersAPI.Features.Commands.DeleteUser
                     HandlerErrorType.NotFound, 
                     $"User with Id {userId} does not exists");
 
-            _userRepository.RemoveUser(user);
-            if(!await _userRepository.SaveChangesAsync(cancellationToken))
+            bool isRequestSuccess = false;
+            string requestErrorMessage = string.Empty;
+
+            try
             {
-                return HandlerResult.Failure(
-                     HandlerErrorType.BadRequest,
-                     "Something wend wrong during deleting");
+                var requestResult = await _client.GetResponse<DeleteUserResponse>(new DeleteUserRequest
+                {
+                    Id = userId
+                });
+
+                isRequestSuccess = requestResult.Message.Success;
+                requestErrorMessage = requestResult.Message.ErrorMessage;
+            }
+            catch (Exception ex)
+            {
+                requestErrorMessage = ex.Message;
             }
 
-            await _publishEndpoint.Publish(new UserDeletedEvent
+            if (!isRequestSuccess)
             {
-                Id = userId
-            });
+                _logger.LogError($"Failed to delete user with Id {user.Id}. External service error: " + requestErrorMessage);
+                throw new Exception("Error during deleting a user");
+            }
+
+            _userRepository.RemoveUser(user);
+            if (!await _userRepository.SaveChangesAsync(cancellationToken))
+                throw new Exception("Something wend wrong during deleting");
 
             await _cache.UpdateVersionAsync(CacheKeys.User.List);
             await _userCacheHelper.ClearUserCache(user);
