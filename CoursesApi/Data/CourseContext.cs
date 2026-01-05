@@ -8,7 +8,7 @@ namespace CoursesApi.Data
         public CourseContext(DbContextOptions options) : base(options)
         {
             //Database.EnsureDeleted(); 
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
         }
 
         public DbSet<Course> Courses { get; set; }
