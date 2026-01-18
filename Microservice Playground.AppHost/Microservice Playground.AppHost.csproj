@@ -20,10 +20,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\AuthService\AuthAPI.csproj" />
-		<ProjectReference Include="..\CoursesApi\CoursesApi.csproj" />
-		<ProjectReference Include="..\Gateway\Gateway.csproj" />
-		<ProjectReference Include="..\UsersAPI\UsersAPI.csproj" />
+	  <ProjectReference Include="..\AuthAPI\AuthAPI.csproj" />
+	  <ProjectReference Include="..\CoursesApi\CoursesAPI.csproj" />
+	  <ProjectReference Include="..\Gateway\Gateway.csproj" />
+	  <ProjectReference Include="..\Shared\Shared.csproj" />
+	  <ProjectReference Include="..\UsersAPI\UsersAPI.csproj" />
 	</ItemGroup>
 
 </Project>

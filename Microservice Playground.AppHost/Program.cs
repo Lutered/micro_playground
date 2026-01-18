@@ -54,7 +54,7 @@ builder.AddProject<Projects.UsersAPI>("usersapi")
     .WithReference(redis)
     .WithReference(elasticSearch);
 
-builder.AddProject<Projects.CoursesApi>("coursesapi")
+builder.AddProject<Projects.CoursesAPI>("coursesapi")
      .WithReference(coursesDb)
      .WithReference(rabbitMq);
 
